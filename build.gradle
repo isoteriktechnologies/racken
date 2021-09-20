@@ -38,3 +38,7 @@ test {
     useJUnitPlatform()
 }
 
+//task assembleToLocalRepository(dependsOn: ['clean', 'build', 'install', 'publishToMavenLocal'])
+//build.mustRunAfter clean
+//install.mustRunAfter build
+//publishToMavenLocal.mustRunAfter install
