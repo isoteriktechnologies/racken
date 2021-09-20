@@ -1,20 +1,40 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'maven-publish'
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
-group 'com.isoterik'
-version '1.0.0-SNAPSHOT'
+ext {
+    PUBLISH_GROUP_ID = 'com.isoterik'
+    PUBLISH_VERSION = '1.0.0-SNAPSHOT'
+    PUBLISH_ARTIFACT_ID = 'racken'
+}
+
+apply from: "${rootDir}/scripts/publish-root.gradle"
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+
+group = PUBLISH_GROUP_ID
+version = PUBLISH_VERSION
+
+ext {
+    gdxVersion = '1.10.0'
+}
 
 repositories {
     mavenCentral()
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
 }
 
 test {
     useJUnitPlatform()
 }
+
