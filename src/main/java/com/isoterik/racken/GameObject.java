@@ -19,7 +19,7 @@ import com.isoterik.racken.util.PoolableArrayIterator;
  *
  * @see Component
  *
- * @author isoteriksoftware
+ * @author isoterik
  */
 public final class GameObject {
     private final Array<Component> components;

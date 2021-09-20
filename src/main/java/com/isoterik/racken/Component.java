@@ -2,6 +2,7 @@ package com.isoterik.racken;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
+import com.isoterik.racken.input.InputManager;
 
 /**
  * A Component is a functional piece of a {@link GameObject}. Every component is an isolated functionality that can be attached to a {@link GameObject} to give that functionality to
