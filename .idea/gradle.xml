@@ -12,6 +12,20 @@
           </set>
         </option>
       </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/runtime-test" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/runtime-test" />
+            <option value="$PROJECT_DIR$/runtime-test/android" />
+            <option value="$PROJECT_DIR$/runtime-test/core" />
+            <option value="$PROJECT_DIR$/runtime-test/desktop" />
+            <option value="$PROJECT_DIR$/runtime-test/html" />
+            <option value="$PROJECT_DIR$/runtime-test/ios" />
+          </set>
+        </option>
+      </GradleProjectSettings>
     </option>
   </component>
 </project>
