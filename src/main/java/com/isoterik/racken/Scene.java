@@ -8,40 +8,39 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.isoteriktech.xgdx.input.InputManager;
-import io.github.isoteriktech.xgdx.x2d.GameCamera2d;
-import io.github.isoteriktech.xgdx.x2d.components.renderer.SpriteRenderer;
-import io.github.isoteriktech.xgdx.utils.GameWorldUnits;
-import io.github.isoteriktech.xgdx.x3d.GameCamera3d;
+import com.isoterik.racken._2d.GameCamera2d;
+import com.isoterik.racken.input.InputManager;
+import com.isoterik.racken.util.GameWorldUnits;
 
 /**
  * A Scene contains the {@link GameObject}s of your game. Think of each Scene as a unique level of your game.
  * Every scene has its own {@link InputManager} for managing input.
  * <p>
- * A {@link GameCamera} is used to display a portion of the scene or the whole scene at a time. While its possible to use multiple cameras, scenes currently
- * support only one main camera for projection.
+ * A {@link GameCamera} is used to display a portion of the scene or the whole scene at a time.
  * <p>
  *
- * {@link GameObject}s are manged with {@link Layer}s.
- * Layers are processed top-down; layers added first are processed first (this can be used to manipulate how GameObjects are rendered.)
- * A default layer is provided so you don't have to use layers if you don't need to.
+ * {@link GameObject}s are manged using {@link Layer}s.
+ * Layers are processed top-down; layers added first are processed first (this can be used to manipulate how GameObjects
+ * are rendered)
+ * A default layer is provided, so you don't have to use layers if you don't need to.
  * <p>
- * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive input and render; you don't have do these yourself.
+ * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive
+ * input and render; you don't have do these yourself.
  *
- * @author isoteriksoftware
+ * @author isoterik
  */
 public class Scene {
-    /** A reference to the shared instance of {@link XGdx} */
-    protected XGdx xGdx;
+    /** A reference to the shared instance of {@link Racken} */
+    protected Racken racken;
 
     /** The name of the default layer. Use this to add {@link GameObject}s to the default layer. */
-    public static final String DEFAULT_LAYER = "MGDX_DEFAULT_LAYER";
+    public static final String DEFAULT_LAYER = "RACKEN_DEFAULT_LAYER";
 
     private final Layer defaultLayer;
     protected Array<Layer> layers;
 
     /** The main camera object used for projecting a portion of the scene. */
-    protected GameObject mainCameraObject;
+    protected GameObject mainCameraHost;
 
     /** The default {@link GameWorldUnits} used for this scene */
     protected GameWorldUnits gameWorldUnits;
@@ -53,26 +52,23 @@ public class Scene {
     private float deltaTime;
 
     // These iteration listeners prevent us from creating new instances every time!
-    protected GameObject.__ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
+    protected GameObject.ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
             resumeIter, preUpdateIter, updateIter, resizeIter, postUpdateIter, renderIter,
-            debugLineIter, debugFilledIter, debugPointIter, destroyIter;
+            renderShapeLinedIter, renderShapeFilledIter, renderShapePointIter, destroyIter;
 
     // The state of the Scene
     private boolean isActive;
 
     /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing UI elements */
-    protected Stage canvas;
-
-    /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing GameObjects that uses the Scene2d API. */
-    protected Stage worldCanvas;
+    protected Stage uiStage;
 
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
 
-    /** This flag determines whether custom debug renderings should be done. */
-    protected boolean renderCustomDebugLines;
+    /** This flag determines whether debug renderings should be rendered. */
+    protected boolean renderDebugLines;
 
-    /** Determines whether this stack can be stacked. */
+    /** Determines whether this scene can be stacked. */
     protected boolean stackable = true;
 
     private int resizedWidth, resizedHeight;
@@ -82,15 +78,14 @@ public class Scene {
 
     /**
      * Creates a new instance.
-     * @param is3dScene determines if this scene is a 3D scene or not.
      */
-    public Scene(boolean is3dScene) {
-        xGdx = XGdx.instance();
+    public Scene() {
+        racken = Racken.instance();
 
-        onConstruction();
+        onCreate();
 
-        gameWorldUnits = new GameWorldUnits(xGdx.defaultSettings.VIEWPORT_WIDTH, xGdx.defaultSettings.VIEWPORT_HEIGHT,
-                xGdx.defaultSettings.PIXELS_PER_UNIT);
+        gameWorldUnits = new GameWorldUnits(racken.defaultSettings.VIEWPORT_WIDTH, racken.defaultSettings.VIEWPORT_HEIGHT,
+                racken.defaultSettings.PIXELS_PER_UNIT);
 
         defaultLayer = new Layer(DEFAULT_LAYER);
         layers = new Array<>();
@@ -135,67 +130,56 @@ public class Scene {
 
         preRenderIter = component -> {
             if (component.isEnabled())
-                component.preRender(gameObjects);
+                component.preRender();
         };
 
         renderIter = component -> {
             if (component.isEnabled())
-                component.render(gameObjects);
+                component.render();
         };
 
         postRenderIter = component -> {
             if (component.isEnabled())
-                component.postRender(gameObjects);
+                component.postRender();
         };
 
-        debugLineIter = component -> {
+        renderShapeLinedIter = component -> {
             if (component.isEnabled())
-                component.drawDebugLine(shapeRenderer);
+                component.renderShapeLined(shapeRenderer);
         };
 
-        debugFilledIter = component -> {
+        renderShapeFilledIter = component -> {
             if (component.isEnabled())
-                component.drawDebugFilled(shapeRenderer);
+                component.renderShapeFilled(shapeRenderer);
         };
 
-        debugPointIter = component -> {
+        renderShapePointIter = component -> {
             if (component.isEnabled())
-                component.drawDebugPoint(shapeRenderer);
+                component.renderShapePoint(shapeRenderer);
         };
 
         destroyIter = Component::destroy;
 
-        GameCamera camera;
-        if (is3dScene)
-            camera = new GameCamera3d();
-        else
-            camera = new GameCamera2d();
+        GameCamera camera = new GameCamera2d();
 
-        mainCameraObject = GameObject.newInstance("MainCamera");
-        mainCameraObject.addComponent(camera);
-        addGameObject(mainCameraObject);
+        mainCameraHost = GameObject.newInstance("MainCamera");
+        mainCameraHost.addComponent(camera);
+        addGameObject(mainCameraHost);
 
         setupCanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
                 gameWorldUnits.getScreenHeight()));
-        setupWorldCanvas(camera.getViewport());
 
         shapeRenderer = new ShapeRenderer();
     }
 
     /**
-     * Creates a new 2d scene.
-     */
-    public Scene() {
-        this(false);
-    }
-
-    /**
-     * This is called during construction before instance fields are initialized. This is useful for setting default properties
+     * This is called during construction before instance fields are initialized. This is useful for setting default
+     * properties
      * that will be used during construction.
      *
      * <strong>Most instance fields are not initialized yet, it is not safe to make use of them here!</strong>
      */
-    protected void onConstruction() {
+    protected void onCreate() {
     }
 
     /**
@@ -213,21 +197,25 @@ public class Scene {
     { return stackable; }
 
     /**
-     * Stackable scenes are scenes that can be added to a stack when the {@link SceneManager} switches scenes. Instances of stackable scenes are always retained and can
-     * be switched back to using the same instance. Scenes that are not stackable are disposed as soon as the scene manager switches from them.
+     * Stackable scenes are scenes that can be added to a stack when the {@link SceneManager} switches scenes.
+     * Instances of stackable scenes are always retained and can be switched back to using the same instance.
+     * Scenes that are not stackable are disposed as soon as the scene manager switches from them.
      * <p>
      * <strong>A good rule of thumb:</strong>
      * <ul>
      *     <li>
-     *         If the scene takes a considerable amount of time to load resources and the scene is very likely to be returned to then it may be a
-     *         good choice to make it stackable. That way the resources are loaded only once.
+     *         If the scene takes a considerable amount of time to load resources and the scene is very likely to be
+     *         returned to then it may be a good choice to make it stackable.
+     *         That way the resources are loaded only once.
      *     </li>
      *     <li>
      *         If the scene is very resource intensive and other scenes need to be loaded then it may be a good
-     *         idea to NOT make it stackable. That way the resources allocated by that scene is disposed as soon as it is no longer needed.
+     *         idea to NOT make it stackable. That way the resources allocated by that scene is disposed as soon as it
+     *         is no longer needed.
      *     </li>
      *     <li>
-     *         If the scene is a UI scene (like a main menu scene) then it may be a good idea to make it stackable since UI scenes are usually visited many times.
+     *         If the scene is a UI scene (like a menu scene) then it may be a good idea to make it stackable
+     *         since UI scenes are usually visited many times.
      *     </li>
      * </ul>
      * <p>
@@ -242,50 +230,37 @@ public class Scene {
      * Custom debug lines can be rendered around game objects. This is useful for debugging purposes.
      * This is also useful for tracking invisible game objects (game objects that are not rendered).
      * Use this method to decide if those debug lines should be rendered or not.
-     * @param renderCustomDebugLines whether custom debug lines are rendered
+     * @param renderDebugLines whether custom debug lines are rendered
      */
-    public void setRenderCustomDebugLines(boolean renderCustomDebugLines)
-    { this.renderCustomDebugLines = renderCustomDebugLines; }
+    public void setRenderDebugLines(boolean renderDebugLines)
+    { this.renderDebugLines = renderDebugLines; }
 
     /**
      *
      * @return whether custom debug lines are rendered or not
      */
-    public boolean isRenderCustomDebugLines()
-    { return renderCustomDebugLines; }
+    public boolean isRenderDebugLines()
+    { return renderDebugLines; }
 
     /**
-     * By default, the ui canvas (an instance of {@link Stage}) is setup with an {@link com.badlogic.gdx.utils.viewport.StretchViewport}.
+     * By default, the ui stage (an instance of {@link Stage}) is set up with an {@link com.badlogic.gdx.utils.viewport.StretchViewport}.
      * Use this method to change the viewport to your desired viewport.
      * @param viewport a viewport for scaling UI elements
      */
     public void setupCanvas(Viewport viewport) {
-        if (canvas != null)
-            input.getInputMultiplexer().removeProcessor(canvas);
+        if (uiStage != null)
+            input.getInputMultiplexer().removeProcessor(uiStage);
 
-        canvas = new Stage(viewport);
-        input.getInputMultiplexer().addProcessor(canvas);
-    }
-
-    /**
-     * By default, the animation canvas (an instance of {@link Stage}) is setup with the same viewport as the main camera
-     * Use this method to change the viewport to your desired viewport.
-     * @param viewport the viewport for scaling UI elements
-     */
-    public void setupWorldCanvas(Viewport viewport) {
-        worldCanvas = new Stage(viewport);
+        uiStage = new Stage(viewport);
+        input.getInputMultiplexer().addProcessor(uiStage);
     }
 
     /**
      *
      * @return the {@link Stage} used for managing UI elements.
      */
-    public Stage getCanvas()
-    { return canvas; }
-
-    public Stage getWorldCanvas() {
-        return worldCanvas;
-    }
+    public Stage getUIStage()
+    { return uiStage; }
 
     /**
      * A scene becomes active when the scene is resumed. It goes back to an inactive state when the scene is paused.
@@ -302,12 +277,13 @@ public class Scene {
     { return input; }
 
     /**
-     * Changes the camera used for projecting this scene. This only changes the attached {@link GameCamera} and not the gameObject itself
+     * Changes the camera used for projecting this scene. This only changes the attached {@link GameCamera} and not the
+     * GameObject itself
      * @param mainCamera the {@link GameCamera} for projecting this scene.
      */
     public void setupMainCamera(GameCamera mainCamera) {
-        mainCameraObject.removeComponent(getMainCamera());
-        mainCameraObject.addComponent(mainCamera);
+        this.mainCameraHost.removeComponent(getMainCamera());
+        this.mainCameraHost.addComponent(mainCamera);
     }
 
     /**
@@ -315,7 +291,7 @@ public class Scene {
      * @return the main camera used for projecting this scene.
      */
     public GameCamera getMainCamera()
-    { return mainCameraObject.getComponent(GameCamera.class); }
+    { return mainCameraHost.getComponent(GameCamera.class); }
 
     /**
      * Finds a layer, given the name.
@@ -412,14 +388,10 @@ public class Scene {
         if (!hasLayer(layer))
             throw new IllegalArgumentException("This layer does not exist in this scene");
 
-        // If this game object is an ActorGameObject, add it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            worldCanvas.addActor(((ActorGameObject)gameObject).actorTransform.actor);
-
         gameObject.__setHostScene(this);
         layer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -433,14 +405,10 @@ public class Scene {
         if (layer == null)
             throw new IllegalArgumentException("This layer does not exist in this scene");
 
-        // If this game object is an ActorGameObject, add it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            worldCanvas.addActor(((ActorGameObject)gameObject).actorTransform.actor);
-
         gameObject.__setHostScene(this);
         layer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -448,14 +416,10 @@ public class Scene {
      * @param gameObject the game object to add.
      */
     public void addGameObject(GameObject gameObject) {
-        // If this game object is an ActorGameObject, add it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            worldCanvas.addActor(((ActorGameObject)gameObject).actorTransform.actor);
-
         gameObject.__setHostScene(this);
         defaultLayer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -467,10 +431,6 @@ public class Scene {
     public boolean removeGameObject(GameObject gameObject, Layer layer) {
         if (!hasLayer(layer))
             return false;
-
-        // If this game object is an ActorGameObject, remove it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            ((ActorGameObject)gameObject).actorTransform.actor.remove();
 
         gameObject.__removeFromScene();
         gameObject.__setHostScene(null);
@@ -488,10 +448,6 @@ public class Scene {
         if (layer == null)
             return false;
 
-        // If this game object is an ActorGameObject, remove it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            ((ActorGameObject)gameObject).actorTransform.actor.remove();
-
         gameObject.__removeFromScene();
         gameObject.__setHostScene(null);
         return layer.removeGameObject(gameObject);
@@ -503,27 +459,27 @@ public class Scene {
      * @return true if the game object was removed. false otherwise.
      */
     public boolean removeGameObject(GameObject gameObject) {
-        // If this game object is an ActorGameObject, remove it to the animation canvas
-        if (gameObject instanceof ActorGameObject)
-            ((ActorGameObject)gameObject).actorTransform.actor.remove();
-
         gameObject.__removeFromScene();
         gameObject.__setHostScene(null);
         return defaultLayer.removeGameObject(gameObject);
     }
 
     /**
-     *
-     * @return all the game objects added to this scene
+     * Returns all the game objects in this scene
+     * @param out an output array (can be null)
+     * @return all the game objects in this scene
      */
-    public Array<GameObject> getGameObjects() {
-        Array<GameObject> gameObjects = new Array<>();
+    public Array<GameObject> getGameObjects(Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
 
+        Array<GameObject> temp = new Array<>();
         for (Layer layer : layers) {
-            gameObjects.addAll(layer.getGameObjects());
+            temp.clear();
+            out.addAll(layer.getGameObjects(out));
         }
 
-        return gameObjects;
+        return out;
     }
 
     /**
@@ -544,15 +500,20 @@ public class Scene {
     /**
      * Finds all gameObjects with the given tag.
      * @param tag the gameObjects tag.
+     * @param out the output array (can be null)
      * @return all gameObjects with the given tag or an empty array if none found.
      */
-    public Array<GameObject> findGameObjects(String tag) {
-        Array<GameObject> gameObjects = new Array<>();
+    public Array<GameObject> findGameObjects(String tag, Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
 
-        for (Layer layer : layers)
-            gameObjects.addAll(layer.findGameObjects(tag));
+        Array<GameObject> temp = new Array<>();
+        for (Layer layer : layers) {
+            temp.clear();
+            out.addAll(layer.findGameObjects(tag, temp));
+        }
 
-        return gameObjects;
+        return out;
     }
 
     protected GameObject findGameObject(String tag, Layer layer) {
@@ -562,11 +523,14 @@ public class Scene {
         return layer.findGameObject(tag);
     }
 
-    protected Array<GameObject> findGameObjects(String tag, Layer layer) {
+    protected Array<GameObject> findGameObjects(String tag, Layer layer, Array<GameObject> out) {
         if (layer == null)
-            return null;
+            return new Array<>();
 
-        return layer.findGameObjects(tag);
+        if (out == null)
+            out = new Array<>();
+
+        return layer.findGameObjects(tag, out);
     }
 
     /**
@@ -585,8 +549,11 @@ public class Scene {
      * @param layerName the layer's name
      * @return all gameObjects with the given tag or an empty array if neither the gameObject or the layer exists.
      */
-    public Array<GameObject> findGameObjects(String tag, String layerName) {
-        return findGameObjects(tag, findLayer(layerName));
+    public Array<GameObject> findGameObjects(String tag, String layerName, Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
+
+        return findGameObjects(tag, findLayer(layerName), out);
     }
 
     /**
@@ -603,17 +570,24 @@ public class Scene {
     private void updateComponents(Array<GameObject> gameObjects, final float deltaTime) {
         this.deltaTime = deltaTime;
 
+        fetchGameObjects();
+
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(preUpdateIter);
+            go.forEachComponent(preUpdateIter);
         }
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(updateIter);
+            go.forEachComponent(updateIter);
         }
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(postUpdateIter);
+            go.forEachComponent(postUpdateIter);
         }
+    }
+
+    private void fetchGameObjects() {
+        gameObjects.clear();
+        gameObjects = getGameObjects(gameObjects);
     }
 
     /**
@@ -626,13 +600,13 @@ public class Scene {
         this.resizedWidth = width;
         this.resizedHeight = height;
 
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(resizeIter);
+            go.forEachComponent(resizeIter);
         }
 
-        canvas.getViewport().update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
     }
 
     /**
@@ -642,10 +616,10 @@ public class Scene {
     public void __resume() {
         isActive = true;
 
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(resumeIter);
+            go.forEachComponent(resumeIter);
         }
     }
 
@@ -656,10 +630,10 @@ public class Scene {
     public void __pause() {
         isActive = false;
 
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(pauseIter);
+            go.forEachComponent(pauseIter);
         }
     }
 
@@ -673,12 +647,11 @@ public class Scene {
 
         input.__update();
 
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         updateComponents(gameObjects, deltaTime);
 
-        worldCanvas.act(deltaTime);
-        canvas.act(deltaTime);
+        uiStage.act(deltaTime);
     }
 
     /**
@@ -686,36 +659,33 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __render() {
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         // Render
         render();
 
         // Render debug drawings
-        if (renderCustomDebugLines)
+        if (renderDebugLines)
             renderDebugDrawings();
 
-        // Draw the world canvas
-        worldCanvas.draw();
-
         // Draw the UI
-        canvas.draw();
+        uiStage.draw();
     }
 
     protected void render() {
         // Before Render
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(preRenderIter);
+            go.forEachComponent(preRenderIter);
         }
 
         // Render
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(renderIter);
+            go.forEachComponent(renderIter);
         }
 
         // After Render
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(postRenderIter);
+            go.forEachComponent(postRenderIter);
         }
     }
 
@@ -725,21 +695,21 @@ public class Scene {
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugFilledIter);
+            go.forEachComponent(renderShapeFilledIter);
         }
         shapeRenderer.end();
 
         // Line
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugLineIter);
+            go.forEachComponent(renderShapeLinedIter);
         }
         shapeRenderer.end();
 
         // Point
         shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugPointIter);
+            go.forEachComponent(renderShapePointIter);
         }
         shapeRenderer.end();
     }
@@ -749,13 +719,13 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __destroy() {
-        gameObjects = getGameObjects();
+        fetchGameObjects();
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(destroyIter);
+            go.forEachComponent(destroyIter);
         }
 
-        canvas.dispose();
+        uiStage.dispose();
     }
 
     /**
@@ -858,84 +828,4 @@ public class Scene {
      */
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param tag a tag for the game object.
-     * @param sprite a {@link TextureRegion} to render
-     * @param gameWorldUnits a {@link GameWorldUnits} instance used for converting the sprite's pixel dimensions to world units
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(String tag, TextureRegion sprite,
-                                      GameWorldUnits gameWorldUnits) {
-        ActorGameObject go = ActorGameObject.newInstance(tag);
-        SpriteRenderer sr = new SpriteRenderer(sprite, gameWorldUnits);
-        go.addComponent(sr);
-
-        return go;
-    }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * The current {@link GameWorldUnits} instance will be used for unit conversions.
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param tag a tag for the game object.
-     * @param sprite a {@link TextureRegion} to render
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(String tag, TextureRegion sprite)
-    { return newActorSpriteObject(tag, sprite, gameWorldUnits); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param sprite a {@link TextureRegion} to render
-     * @param gameWorldUnits a {@link GameWorldUnits} instance used for converting the sprite's pixel dimensions to world units
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(TextureRegion sprite, GameWorldUnits gameWorldUnits)
-    { return newActorSpriteObject("Untagged", sprite, gameWorldUnits); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * The current {@link GameWorldUnits} instance will be used for unit conversions.
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param sprite a {@link TextureRegion} to render
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(TextureRegion sprite)
-    { return newActorSpriteObject("Untagged", sprite); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param tag a tag for the game object.
-     * @param sprite a {@link Texture} to render. <strong>The entire texture will be rendered!</strong>
-     * @param gameWorldUnits a {@link GameWorldUnits} instance used for converting the sprite's pixel dimensions to world units
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(String tag, Texture sprite, GameWorldUnits gameWorldUnits)
-    { return newActorSpriteObject(tag, new TextureRegion(sprite), gameWorldUnits); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * The current {@link GameWorldUnits} instance will be used for unit conversions.
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param tag a tag for the game object.
-     * @param sprite a {@link Texture} to render. <strong>The entire texture will be rendered!</strong>
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(String tag, Texture sprite)
-    { return newActorSpriteObject(tag, sprite, gameWorldUnits); }
-
-    /**
-     * A convenient method for quickly creating a game object that renders a sprite ({@link TextureRegion}).
-     * The current {@link GameWorldUnits} instance will be used for unit conversions.
-     * <strong>The returned game object is not added to the scene; you have to add it yourself!</strong>
-     * @param sprite a {@link Texture} to render. <strong>The entire texture will be rendered!</strong>
-     * @return the created game object
-     */
-    public ActorGameObject newActorSpriteObject(Texture sprite)
-    { return newActorSpriteObject("Untagged", sprite); }
 }

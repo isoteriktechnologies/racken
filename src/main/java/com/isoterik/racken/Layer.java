@@ -38,11 +38,17 @@ public class Layer {
     { return gameObjects.removeValue(gameObject, true); }
 
     /**
-     *
+     * Returns all the game objects in this layer
+     * @param out the output array (can be null)
      * @return the game objects of this layer
      */
-    public Array<GameObject> getGameObjects()
-    { return gameObjects; }
+    public Array<GameObject> getGameObjects(Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
+
+        out.addAll(gameObjects);
+        return out;
+    }
 
     /**
      * Finds the first gameObject with the given tag.
@@ -61,17 +67,19 @@ public class Layer {
     /**
      * Finds all gameObjects with the given tag.
      * @param tag the gameObjects tag.
+     * @param out the output array (can be null)
      * @return all gameObjects with the given tag or an empty array if none found.
      */
-    public Array<GameObject> findGameObjects(String tag) {
-        Array<GameObject> result = new Array<>();
+    public Array<GameObject> findGameObjects(String tag, Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
 
         for (GameObject gameObject : gameObjects) {
             if (gameObject.sameTag(tag))
-                result.add(gameObject);
+                out.add(gameObject);
         }
 
-        return result;
+        return out;
     }
 
     /**
