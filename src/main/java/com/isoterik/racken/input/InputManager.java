@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
-import com.isoterik.racken.Scene;
 
 /**
  * An instance of this class is used to manage all input-related tasks of a {@link Scene}.
