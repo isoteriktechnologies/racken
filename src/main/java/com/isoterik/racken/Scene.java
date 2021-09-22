@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken._2d.GameCamera2d;
 import com.isoterik.racken._2d.components.renderer.SpriteRenderer;
 import com.isoterik.racken.input.InputManager;
 import com.isoterik.racken.util.GameWorldUnits;
+import com.isoterik.racken.util.PoolableArrayIterator;
 
 /**
  * A Scene contains the {@link GameObject}s of your game. Think of each Scene as a unique level of your game.
@@ -75,7 +77,9 @@ public class Scene {
     private int resizedWidth, resizedHeight;
 
     // An array of game objects
-    Array<GameObject> gameObjects = new Array<>();
+    private Array<GameObject> gameObjects = new Array<>();
+
+    private final GameObjectIteratorPool gameObjectIteratorPool = new GameObjectIteratorPool(gameObjects);
 
     /**
      * Creates a new instance.
@@ -567,6 +571,26 @@ public class Scene {
             ((GameCamera2d)camera).setBackgroundColor(color);
     }
 
+    /**
+     * Calls the given iteration listener on all game objects in this scene
+     * This is the recommended way to iterate through the game objects in a scene
+     * @param iterationListener the iteration listener
+     */
+    public void forEachGameObject(GameObjectIterationListener iterationListener) {
+        fetchGameObjects();
+        PoolableArrayIterator<GameObject> iterator = gameObjectIteratorPool.obtain();
+
+        while (iterator.hasNext())
+            iterationListener.onIterate(iterator.next());
+
+        gameObjectIteratorPool.free(iterator);
+    }
+
+    private void fetchGameObjects() {
+        gameObjects.clear();
+        gameObjects = getGameObjects(gameObjects);
+    }
+
     private void updateComponents(Array<GameObject> gameObjects, final float deltaTime) {
         this.deltaTime = deltaTime;
 
@@ -583,11 +607,6 @@ public class Scene {
         for (GameObject go : gameObjects) {
             go.forEachComponent(postUpdateIter);
         }
-    }
-
-    private void fetchGameObjects() {
-        gameObjects.clear();
-        gameObjects = getGameObjects(gameObjects);
     }
 
     /**
@@ -828,4 +847,24 @@ public class Scene {
      */
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
+
+    /**
+     * An iteration listener that can be used to iterate through the game objects of a scene.
+     */
+    public interface GameObjectIterationListener {
+        void onIterate(GameObject gameObject);
+    }
+
+    private static class GameObjectIteratorPool extends Pool<PoolableArrayIterator<GameObject>> {
+        private final Array<GameObject> gameObjectArray;
+
+        public  GameObjectIteratorPool(Array<GameObject> gameObjectArray) {
+            this.gameObjectArray = gameObjectArray;
+        }
+
+        @Override
+        protected PoolableArrayIterator<GameObject> newObject() {
+            return new PoolableArrayIterator<>(gameObjectArray);
+        }
+    }
 }
