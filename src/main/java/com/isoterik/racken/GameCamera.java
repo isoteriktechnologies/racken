@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken.util.GameWorldUnits;
+import com.isoterik.racken._2d.GameCamera2d;
 
 /**
  * A GameCamera encapsulates a {@link Camera} object. Concrete subclasses makes use of a specific kind of camera.
