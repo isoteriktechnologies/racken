@@ -30,6 +30,7 @@ allprojects {
         ashleyVersion = '1.7.3'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.1.0'
+        rackenVersion = '1.0.0-SNAPSHOT'
     }
 
     repositories {
@@ -107,6 +108,6 @@ project(":core") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        api "com.isoterik.racken:racken:$rackenVersion"
     }
 }
