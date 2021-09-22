@@ -1570,7 +1570,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	 * @param catchBackKey if {@code true} the BACK key will stop exiting the application when pressed
 	 */
 	public void setCatchBackKey(boolean catchBackKey)
-	{ Gdx.input.setCatchKey(KeyCodes.BACK, catchBackKey); }
+	{ Gdx.input.setCatchKey(Input.Keys.BACK, catchBackKey); }
 
 	/**
 	 * Determines whether the mouse cursor is displayed.
