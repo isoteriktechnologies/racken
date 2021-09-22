@@ -591,24 +591,6 @@ public class Scene {
         gameObjects = getGameObjects(gameObjects);
     }
 
-    private void updateComponents(Array<GameObject> gameObjects, final float deltaTime) {
-        this.deltaTime = deltaTime;
-
-        fetchGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(preUpdateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(updateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(postUpdateIter);
-        }
-    }
-
     /**
      * Called when the screen is resized.
      * <strong>DO NOT CALL THIS METHOD!</strong>
@@ -619,11 +601,7 @@ public class Scene {
         this.resizedWidth = width;
         this.resizedHeight = height;
 
-        fetchGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(resizeIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(resizeIter));
 
         uiStage.getViewport().update(width, height, true);
     }
@@ -635,11 +613,7 @@ public class Scene {
     public void __resume() {
         isActive = true;
 
-        fetchGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(resumeIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(resumeIter));
     }
 
     /**
@@ -649,11 +623,13 @@ public class Scene {
     public void __pause() {
         isActive = false;
 
-        fetchGameObjects();
+        forEachGameObject(gameObject -> gameObject.forEachComponent(pauseIter));
+    }
 
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(pauseIter);
-        }
+    protected void updateComponents() {
+        forEachGameObject(gameObject -> gameObject.forEachComponent(preUpdateIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(updateIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(postUpdateIter));
     }
 
     /**
@@ -665,11 +641,7 @@ public class Scene {
         this.deltaTime = deltaTime;
 
         input.__update();
-
-        fetchGameObjects();
-
-        updateComponents(gameObjects, deltaTime);
-
+        updateComponents();
         uiStage.act(deltaTime);
     }
 
@@ -678,8 +650,6 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __render() {
-        fetchGameObjects();
-
         // Render
         render();
 
@@ -693,19 +663,13 @@ public class Scene {
 
     protected void render() {
         // Before Render
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(preRenderIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(preRenderIter));
 
         // Render
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(renderIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(renderIter));
 
         // After Render
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(postRenderIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(postRenderIter));
     }
 
     protected void renderDebugDrawings() {
@@ -713,23 +677,17 @@ public class Scene {
 
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(renderShapeFilledIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(renderShapeFilledIter));
         shapeRenderer.end();
 
         // Line
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(renderShapeLinedIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(renderShapeLinedIter));
         shapeRenderer.end();
 
         // Point
         shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(renderShapePointIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(renderShapePointIter));
         shapeRenderer.end();
     }
 
@@ -738,11 +696,7 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __destroy() {
-        fetchGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.forEachComponent(destroyIter);
-        }
+        forEachGameObject(gameObject -> gameObject.forEachComponent(destroyIter));
 
         uiStage.dispose();
     }
