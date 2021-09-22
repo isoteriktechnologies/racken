@@ -224,7 +224,7 @@ public final class GameObject {
     { return components.contains(component, true); }
 
     /**
-     * Calls the given IterationListener on all components attached to this game object.
+     * Calls the given iteration listener on all components attached to this game object.
      * This method is used internally. While it is safe to call it, you usually don't need to.
      * @param iterationListener the iteration listener
      */
@@ -232,7 +232,7 @@ public final class GameObject {
         PoolableArrayIterator<Component> componentArrayIterator = componentIteratorPool.obtain();
 
         while (componentArrayIterator.hasNext())
-            iterationListener.onComponent(componentArrayIterator.next());
+            iterationListener.onIterate(componentArrayIterator.next());
 
         componentIteratorPool.free(componentArrayIterator);
     }
@@ -250,7 +250,7 @@ public final class GameObject {
      * An iteration listener that can be used to iterate the components of a {@link GameObject}.
      */
     public interface ComponentIterationListener {
-        void onComponent(Component component);
+        void onIterate(Component component);
     }
 
     /**
