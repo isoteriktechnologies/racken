@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Layers are used to group {@link GameObject}s of a {@link Scene}.
  *
- * @author isoteriksoftware
+ * @author isoterik
  */
 public class Layer {
     private final Array<GameObject> gameObjects;

@@ -175,8 +175,7 @@ public class Scene {
 
     /**
      * This is called during construction before instance fields are initialized. This is useful for setting default
-     * properties
-     * that will be used during construction.
+     * properties that will be used during construction.
      *
      * <strong>Most instance fields are not initialized yet, it is not safe to make use of them here!</strong>
      */

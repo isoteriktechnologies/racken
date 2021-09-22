@@ -7,39 +7,38 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LayerTest {
-    Layer layer1 = new Layer("layer1");
-    Layer layer2 = new Layer("layer2");
+    Layer layer = new Layer("layer1");
 
     @Test
     public void testAddAndRemoveGameObjects() {
-        layer1.clear();
+        layer.clear();
 
-        layer1.addGameObject(GameObject.newInstance());
-        layer1.addGameObject(GameObject.newInstance());
+        layer.addGameObject(GameObject.newInstance());
+        layer.addGameObject(GameObject.newInstance());
 
-        assertEquals(2, layer1.size());
+        assertEquals(2, layer.size());
 
-        layer1.removeGameObject(layer1.getGameObjects(null).first());
+        layer.removeGameObject(layer.getGameObjects(null).first());
 
-        assertEquals(1, layer1.size());
+        assertEquals(1, layer.size());
     }
 
     @Test
     public void testFetchLayerGameObjects() {
-        layer1.clear();
+        layer.clear();
 
-        layer1.addGameObject(GameObject.newInstance());
-        layer1.addGameObject(GameObject.newInstance());
+        layer.addGameObject(GameObject.newInstance());
+        layer.addGameObject(GameObject.newInstance());
 
-        assertEquals(2, layer1.size());
+        assertEquals(2, layer.size());
 
         Array<GameObject> gameObjects = null; // this is intentional
-        gameObjects = layer1.getGameObjects(gameObjects);
+        gameObjects = layer.getGameObjects(gameObjects);
 
         assertEquals(2, gameObjects.size);
 
         Array<GameObject> gameObjects2 = new Array<>();
-        Array<GameObject> temp = layer1.getGameObjects(gameObjects2);
+        Array<GameObject> temp = layer.getGameObjects(gameObjects2);
 
         assertSame(gameObjects2, temp);
         assertEquals(2, gameObjects2.size);
