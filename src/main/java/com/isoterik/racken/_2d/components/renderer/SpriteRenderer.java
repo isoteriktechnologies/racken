@@ -209,7 +209,7 @@ public class SpriteRenderer extends Component {
      */
     @Override
     public void attach() {
-        // Setup the world size of this sprite once we have a game object
+        // Set up the world size of this sprite once we have a game object
         setWorldSize();
     }
 
