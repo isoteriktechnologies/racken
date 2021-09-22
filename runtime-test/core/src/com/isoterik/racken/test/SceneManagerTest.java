@@ -1,27 +1,54 @@
 package com.isoterik.racken.test;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.isoterik.racken.Component;
-import com.isoterik.racken.GameObject;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Timer;
 import com.isoterik.racken.Scene;
+import com.isoterik.racken.input.TouchTrigger;
 
 public class SceneManagerTest extends Scene {
+    Scene2 scene2;
+    Scene3 scene3;
+
     public SceneManagerTest() {
-        GameObject box = newSpriteObject(new Texture(Gdx.files.internal("badlogic.jpg")));
+        scene3 = new Scene3();
+    }
 
-        addGameObject(box);
+    @Override
+    public void transitionedToThisScene(Scene previousScene) {
+        scene2 = new Scene2();
 
-        box.addComponent(new Component() {
+        Timer.schedule(new Timer.Task() {
             @Override
-            public void render() {
-                System.out.println("render");
+            public void run() {
+                racken.setScene(scene2);
             }
+        }, 3);
+    }
 
-            @Override
-            public void resize(int newScreenWidth, int newScreenHeight) {
-                System.out.println("resize");
-            }
-        });
+    class Scene2 extends Scene {
+        public Scene2() {
+            setBackgroundColor(Color.BLUE);
+            setStackable(false);
+        }
+
+        @Override
+        public void transitionedToThisScene(Scene previousScene) {
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    racken.setScene(scene3);
+                }
+            }, 3);
+        }
+    }
+
+    class Scene3 extends Scene {
+        public Scene3() {
+            setBackgroundColor(Color.BROWN);
+
+            input.addTouchListener(TouchTrigger.touchDownTrigger(), (mappingName, touchEventData) -> {
+                racken.sceneManager.revertToPreviousScene();
+            });
+        }
     }
 }
