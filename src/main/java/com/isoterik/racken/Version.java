@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * @author mzechner */
 public class Version {
     /** the current version of racken as a String in the major.minor.revision format **/
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.0.0";
 
     /** the current major version of racken **/
     public static final int MAJOR;
