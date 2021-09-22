@@ -108,6 +108,6 @@ project(":core") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.isoterik.racken:racken:$rackenVersion"
+        api "com.isoterik:racken:$rackenVersion"
     }
 }

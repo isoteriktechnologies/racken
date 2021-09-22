@@ -1,4 +1,6 @@
 package com.isoterik.racken.test;
 
-public class SceneManagerTest {
+import com.isoterik.racken.Scene;
+
+public class SceneManagerTest extends Scene {
 }

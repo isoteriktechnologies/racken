@@ -476,7 +476,7 @@ public class Scene {
         Array<GameObject> temp = new Array<>();
         for (Layer layer : layers) {
             temp.clear();
-            out.addAll(layer.getGameObjects(out));
+            out.addAll(layer.getGameObjects(temp));
         }
 
         return out;
