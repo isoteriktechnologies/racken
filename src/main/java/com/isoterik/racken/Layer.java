@@ -83,6 +83,21 @@ public class Layer {
     }
 
     /**
+     * Removes all game objects from this layer
+     */
+    public void clear() {
+        gameObjects.clear();
+    }
+
+    /**
+     * Returns the count of all game objects in this layer
+     * @return the count of all game objects in this layer
+     */
+    public int size() {
+        return gameObjects.size;
+    }
+
+    /**
      * Sets a name for this layer.
      * @param name the name
      */
