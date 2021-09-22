@@ -1,10 +1,9 @@
 package com.isoterik.racken._2d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -39,8 +38,7 @@ public class GameCamera2d extends GameCamera {
      * @param gameWorldUnits an instance of {@link GameWorldUnits}
      */
     public GameCamera2d(GameWorldUnits gameWorldUnits) {
-        this(new ExtendViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight(),
-                new OrthographicCamera(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight())));
+        this(new ExtendViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight()));
     }
 
     /**
@@ -86,16 +84,15 @@ public class GameCamera2d extends GameCamera {
 
     @Override
     public void setup(Viewport viewport) {
-        super.setup(viewport);
-
-        if (camera == null || !(camera instanceof PerspectiveCamera)) {
+        if (camera == null || !(camera instanceof OrthographicCamera)) {
             camera = new OrthographicCamera(viewport.getWorldWidth(), viewport.getWorldHeight());
             getCamera().setToOrtho(false, viewport.getWorldWidth(), viewport.getWorldHeight());
-            viewport.setCamera(camera);
             camera.update();
+            viewport.setCamera(camera);
+            viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), centerCameraOnResize);
         }
 
-        viewport.apply(centerCameraOnResize);
+        super.setup(viewport);
     }
 
     @Override
