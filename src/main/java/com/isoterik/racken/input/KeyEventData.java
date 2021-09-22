@@ -22,7 +22,7 @@ public class KeyEventData implements Pool.Poolable {
 
 	/**
 	 * The key code of the key event
-	 * @see KeyCodes
+	 * @see com.badlogic.gdx.Input.Keys
 	 */
     public int keyCode;
 
