@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken._2d.GameCamera2d;
+import com.isoterik.racken._2d.components.renderer.SpriteRenderer;
 import com.isoterik.racken.input.InputManager;
 import com.isoterik.racken.util.GameWorldUnits;
 
