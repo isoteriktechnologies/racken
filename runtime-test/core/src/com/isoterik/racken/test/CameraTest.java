@@ -30,7 +30,7 @@ public class CameraTest extends Scene {
         addGameObject(tiledMapObject);
         tiledMapObject.addComponent(tiledMapRenderer);
 
-        getMainCamera().setCenterCameraOnResize(false);
+        removeGameObject(mainCameraObject);
     }
 }
 
