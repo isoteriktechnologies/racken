@@ -1,6 +1,7 @@
 package com.isoterik.racken;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken.utils.GameWorldUnits;
@@ -13,7 +14,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  *
  * @author isoteriksoftware
  */
-public class GameCamera extends Component {
+public abstract class GameCamera implements Disposable {
     protected Camera camera;
 
     protected Viewport viewport;
@@ -87,8 +88,7 @@ public class GameCamera extends Component {
     public Camera getCamera()
     { return camera; }
 
-    @Override
-    public void resize(int newScreenWidth, int newScreenHeight) {
+    public void __resize(int newScreenWidth, int newScreenHeight) {
         viewport.update(newScreenWidth, newScreenHeight, centerCameraOnResize);
     }
 }

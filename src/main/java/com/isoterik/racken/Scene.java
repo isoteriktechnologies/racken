@@ -39,9 +39,6 @@ public class Scene {
     private final Layer defaultLayer;
     protected Array<Layer> layers;
 
-    /** The main camera object used for projecting a portion of the scene. */
-    protected GameObject mainCameraObject;
-
     /** The default {@link GameWorldUnits} used for this scene */
     protected GameWorldUnits gameWorldUnits;
 
@@ -77,7 +74,10 @@ public class Scene {
     private int resizedWidth, resizedHeight;
 
     // An array of game objects
-    Array<GameObject> gameObjects = new Array<>();
+    private Array<GameObject> gameObjects = new Array<>();
+
+    private final Array<GameCamera> cameras = new Array<>();
+    private GameCamera mainCamera;
 
     /**
      * Creates a new instance.
@@ -163,15 +163,12 @@ public class Scene {
 
         destroyIter = Component::destroy;
 
-        GameCamera camera = new GameCamera2d();
-
-        mainCameraObject = GameObject.newInstance("MainCamera");
-        mainCameraObject.addComponent(camera);
-        addGameObject(mainCameraObject);
+        mainCamera = new GameCamera2d();
+        addCamera(mainCamera);
 
         setupCanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
                 gameWorldUnits.getScreenHeight()));
-        setupWorldCanvas(camera.getViewport());
+        setupWorldCanvas(mainCamera.getViewport());
 
         shapeRenderer = new ShapeRenderer();
     }
@@ -289,12 +286,17 @@ public class Scene {
     { return input; }
 
     /**
-     * Changes the camera used for projecting this scene. This only changes the attached {@link GameCamera} and not the gameObject itself
-     * @param mainCamera the {@link GameCamera} for projecting this scene.
+     * Sets the main camera used for projecting this scene.
+     * @param mainCamera the camera
      */
-    public void setupMainCamera(GameCamera mainCamera) {
-        mainCameraObject.removeComponent(getMainCamera());
-        mainCameraObject.addComponent(mainCamera);
+    public void setMainCamera(GameCamera mainCamera) {
+        if (this.mainCamera != null) {
+            this.mainCamera.dispose();
+            removeCamera(this.mainCamera);
+        }
+
+        this.mainCamera = mainCamera;
+        addCamera(mainCamera);
     }
 
     /**
@@ -302,7 +304,34 @@ public class Scene {
      * @return the main camera used for projecting this scene.
      */
     public GameCamera getMainCamera()
-    { return mainCameraObject.getComponent(GameCamera.class); }
+    { return mainCamera; }
+
+    /**
+     * Adds a camera to the scene
+     * @param camera the camera to add
+     */
+    public void addCamera(GameCamera camera) {
+        if (!cameras.contains(camera, true))
+            cameras.add(camera);
+    }
+
+    /**
+     * Removes a camera from the scene
+     * @param camera the camera to remove
+     */
+    public void removeCamera(GameCamera camera) {
+        cameras.removeValue(camera, true);
+    }
+
+    /**
+     * Returns all the cameras in this scene
+     * @return all the cameras in this scene
+     */
+    public Array<GameCamera> getCameras() {
+        Array<GameCamera> list = new Array<>();
+        list.addAll(cameras);
+        return list;
+    }
 
     /**
      * Finds a layer, given the name.
@@ -666,6 +695,7 @@ public class Scene {
     }
 
     protected void render() {
+
         // Before Render
         for (GameObject go : gameObjects) {
             go.__forEachComponent(preRenderIter);

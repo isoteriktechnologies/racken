@@ -30,7 +30,7 @@ public class GameCamera2d extends GameCamera {
         super(viewport);
         spriteBatch = new SpriteBatch();
         this.backgroundColor = new Color(1, 0, 0, 1);
-        centerCameraOnResize = true;
+        centerCameraOnResize = false;
     }
 
     /**
@@ -96,30 +96,14 @@ public class GameCamera2d extends GameCamera {
         viewport.apply(centerCameraOnResize);
     }
 
-    @Override
-    public void attach() {
-        if (spriteBatch == null)
-            spriteBatch = new SpriteBatch();
-    }
-
-    @Override
-    public void detach() {
+    public void dispose() {
         if (spriteBatch != null) {
             spriteBatch.dispose();
             spriteBatch = null;
         }
     }
 
-    @Override
-    public void destroy() {
-        if (spriteBatch != null) {
-            spriteBatch.dispose();
-            spriteBatch = null;
-        }
-    }
-
-    @Override
-    public void preRender() {
+    public void __preRender() {
         ScreenUtils.clear(backgroundColor);
         camera.update();
         viewport.apply(centerCameraOnResize);
@@ -127,8 +111,7 @@ public class GameCamera2d extends GameCamera {
         spriteBatch.begin();
     }
 
-    @Override
-    public void postRender() {
+    public void __postRender() {
         spriteBatch.end();
     }
 }
