@@ -1,53 +1,61 @@
 package com.isoterik.racken.test;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.isoterik.racken.GameObject;
 import com.isoterik.racken.Scene;
-import com.isoterik.racken._2d.GameCamera2d;
-import com.isoterik.racken._2d.components.debug.BoxDebugRenderer;
-import com.isoterik.racken._2d.components.renderer.SpriteRenderer;
-import com.isoterik.racken.util.GameWorldUnits;
+import com.isoterik.racken._2d.components.renderer.TiledMapRenderer;
+import com.isoterik.racken.asset.GameAssetsLoader;
 
 public class CameraTest extends Scene {
-    public CameraTest() {
-        Texture texture = new Texture("badlogic.jpg");
-        GameObject obj1 = newSpriteObject(texture);
-
-        addGameObject(obj1);
-
-        GameWorldUnits gw = new GameWorldUnits(1280f, 360f, 100f);
-        GameCamera2d cam1 = new GameCamera2d(gw);
-
-        GameObject cam1Obj = GameObject.newInstance("Cam1");
-        cam1Obj.addComponent(cam1);
-        addGameObject(cam1Obj);
-
-        GameCamera2d cam2 = new GameCamera2d(gw);
-        cam2.getCamera().position.set(0, gw.toWorldUnit(360f), 0);
-
-        GameObject cam2Obj = GameObject.newInstance("Cam2");
-        cam2Obj.addComponent(cam2);
-        addGameObject(cam2Obj);
-
-        GameObject cam1Marker = GameObject.newInstance();
-        cam1Marker.transform.setSize(gw.getWorldWidth(), gw.getWorldHeight()/2f);
-        cam1Marker.addComponent(new BoxDebugRenderer());
-
-        GameObject cam2Marker = GameObject.newInstance();
-        cam2Marker.transform.setSize(gw.getWorldWidth(), gw.getWorldHeight()/2f);
-        cam2Marker.transform.position.set(cam2.getCamera().position);
-        cam2Marker.addComponent(new BoxDebugRenderer().setColor(Color.BLUE));
-
-        addGameObject(cam1Marker);
-        addGameObject(cam2Marker);
-
-        obj1.getComponent(SpriteRenderer.class).setGameCamera(cam1);
-        setRenderDebugLines(true);
-    }
+    private TiledMapRenderer tiledMapRenderer;
 
     @Override
     protected void onCreate() {
-        //racken.defaultSettings.VIEWPORT_HEIGHT = 720;
+        GameAssetsLoader gameAssetsLoader = racken.assets;
+        gameAssetsLoader.enqueueAsset("maps/tiled.tmx", TiledMap.class);
+        gameAssetsLoader.loadAssetsNow();
+        tiledMapRenderer = new TiledMapRenderer(gameAssetsLoader.getAsset("maps/tiled.tmx", TiledMap.class),
+                1/21f);
+
+        racken.defaultSettings.VIEWPORT_WIDTH = tiledMapRenderer.mapWidth/2f;
+        racken.defaultSettings.VIEWPORT_HEIGHT = tiledMapRenderer.mapHeight/2f;
+        racken.defaultSettings.PIXELS_PER_UNIT = 21;
+    }
+
+    public CameraTest() {
+        setBackgroundColor(Color.BLACK);
+
+        GameObject tiledMapObject = GameObject.newInstance("TiledMap");
+        addGameObject(tiledMapObject);
+        tiledMapObject.addComponent(tiledMapRenderer);
+
+        getMainCamera().setCenterCameraOnResize(false);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
