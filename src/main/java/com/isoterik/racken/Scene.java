@@ -59,9 +59,6 @@ public class Scene {
     /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing UI elements */
     protected Stage canvas;
 
-    /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing GameObjects that uses the Scene2d API. */
-    protected Stage worldCanvas;
-
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
 
@@ -168,7 +165,6 @@ public class Scene {
 
         setupCanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
                 gameWorldUnits.getScreenHeight()));
-        setupWorldCanvas(mainCamera.getViewport());
 
         shapeRenderer = new ShapeRenderer();
     }
@@ -252,24 +248,11 @@ public class Scene {
     }
 
     /**
-     * By default, the animation canvas (an instance of {@link Stage}) is setup with the same viewport as the main camera
-     * Use this method to change the viewport to your desired viewport.
-     * @param viewport the viewport for scaling UI elements
-     */
-    public void setupWorldCanvas(Viewport viewport) {
-        worldCanvas = new Stage(viewport);
-    }
-
-    /**
      *
      * @return the {@link Stage} used for managing UI elements.
      */
     public Stage getCanvas()
     { return canvas; }
-
-    public Stage getWorldCanvas() {
-        return worldCanvas;
-    }
 
     /**
      * A scene becomes active when the scene is resumed. It goes back to an inactive state when the scene is paused.
@@ -625,6 +608,9 @@ public class Scene {
         }
 
         canvas.getViewport().update(width, height, true);
+
+        for (GameCamera camera : cameras)
+            camera.__resize(width, height);
     }
 
     /**
@@ -669,7 +655,6 @@ public class Scene {
 
         updateComponents(gameObjects, deltaTime);
 
-        worldCanvas.act(deltaTime);
         canvas.act(deltaTime);
     }
 
@@ -686,9 +671,6 @@ public class Scene {
         // Render debug drawings
         if (renderCustomDebugLines)
             renderDebugDrawings();
-
-        // Draw the world canvas
-        worldCanvas.draw();
 
         // Draw the UI
         canvas.draw();
@@ -749,6 +731,9 @@ public class Scene {
         }
 
         canvas.dispose();
+
+        for (GameCamera camera : cameras)
+            camera.dispose();
     }
 
     /**
