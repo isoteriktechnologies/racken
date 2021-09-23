@@ -67,6 +67,7 @@ public class Scene {
 
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
+    protected GameCamera shapeRendererCamera;
 
     /** This flag determines whether debug renderings should be rendered. */
     protected boolean renderDebugLines;
@@ -166,6 +167,7 @@ public class Scene {
         destroyIter = Component::destroy;
 
         GameCamera camera = new GameCamera2d();
+        shapeRendererCamera = camera;
 
         mainCameraHost = GameObject.newInstance("MainCamera");
         mainCameraHost.addComponent(camera);
@@ -673,7 +675,7 @@ public class Scene {
     }
 
     protected void renderDebugDrawings() {
-        shapeRenderer.setProjectionMatrix(getMainCamera().getCamera().combined);
+        shapeRenderer.setProjectionMatrix(shapeRendererCamera.getCamera().combined);
 
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

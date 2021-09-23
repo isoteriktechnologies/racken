@@ -8,6 +8,6 @@ public class TestDriver extends GameDriver {
 	@Override
 	protected Scene initGame() {
 		splashTransition = SceneTransitions.fade(1f);
-		return new CameraTest();
+		return new SceneManagerTest();
 	}
 }
