@@ -38,8 +38,7 @@ public class GameCamera2d extends GameCamera {
      * @param gameWorldUnits an instance of {@link GameWorldUnits}
      */
     public GameCamera2d(GameWorldUnits gameWorldUnits) {
-        this(new ExtendViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight(),
-                new OrthographicCamera(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight())));
+        this(new ExtendViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight()));
     }
 
     /**
