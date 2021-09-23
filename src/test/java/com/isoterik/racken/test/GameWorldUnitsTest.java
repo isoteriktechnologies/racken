@@ -1,6 +1,6 @@
 package com.isoterik.racken.test;
 
-import com.isoterik.racken.util.GameWorldUnits;
+import com.isoterik.racken.utils.GameWorldUnits;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
