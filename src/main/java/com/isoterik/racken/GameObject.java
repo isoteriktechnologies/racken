@@ -1,7 +1,7 @@
 package com.isoterik.racken;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.isoterik.racken.utils.PoolableArrayIterator;
 
@@ -22,8 +22,7 @@ import com.isoterik.racken.utils.PoolableArrayIterator;
  * @author isoteriksoftware
  */
 public class GameObject {
-    protected final Array<Component> components;
-    protected final ComponentIteratorPool componentIteratorPool;
+    protected final SnapshotArray<Component> components;
 
     public Transform transform;
 
@@ -35,8 +34,7 @@ public class GameObject {
     { this("Untagged"); }
 
     protected GameObject(String tag) {
-        components = new Array<>();
-        componentIteratorPool = new ComponentIteratorPool(components);
+        components = new SnapshotArray<>(Component.class);
 
         transform = new Transform();
         transform.__setGameObject(this);
@@ -213,13 +211,14 @@ public class GameObject {
      * This method is used internally by the system. While it is safe to call it, you usually don't need to.
      * @param iterationListener the iteration listener
      */
-    public void __forEachComponent(__ComponentIterationListener iterationListener) {
-        PoolableArrayIterator<Component> componentArrayIterator = componentIteratorPool.obtain();
+    public void forEachComponent(ComponentIterationListener iterationListener) {
+        Component[] array = components.begin();
 
-        while (componentArrayIterator.hasNext())
-            iterationListener.onComponent(componentArrayIterator.next());
+        for (Component component : array)
+            if (component != null)
+                iterationListener.onIterate(component);
 
-        componentIteratorPool.free(componentArrayIterator);
+        components.end();
     }
 
     /**
@@ -234,21 +233,8 @@ public class GameObject {
     /**
      * An iteration listener that can be used to iterate the components of a {@link GameObject}.
      */
-    public interface __ComponentIterationListener {
-        void onComponent(Component component);
-    }
-
-    private class ComponentIteratorPool extends Pool<PoolableArrayIterator<Component>> {
-        private final Array<Component> componentArray;
-
-        public ComponentIteratorPool(Array<Component> componentArray) {
-            this.componentArray = componentArray;
-        }
-
-        @Override
-        protected PoolableArrayIterator<Component> newObject() {
-            return new PoolableArrayIterator<>(componentArray);
-        }
+    public interface ComponentIterationListener {
+        void onIterate(Component component);
     }
 
     /**

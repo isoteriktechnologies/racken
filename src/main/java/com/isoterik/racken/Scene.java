@@ -43,7 +43,7 @@ public class Scene {
     private float deltaTime;
 
     // These iteration listeners prevent us from creating new instances every time!
-    protected GameObject.__ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
+    protected GameObject.ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
             resumeIter, preUpdateIter, updateIter, resizeIter, postUpdateIter, renderIter,
             debugLineIter, debugFilledIter, debugPointIter, destroyIter;
 
@@ -330,7 +330,7 @@ public class Scene {
     public void addGameObject(GameObject gameObject) {
         gameObject.__setHostScene(this);
         gameObjects.add(gameObject);
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -411,7 +411,7 @@ public class Scene {
         for (GameCamera camera : cameras)
             camera.__resize(width, height);
 
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(resizeIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(resizeIter));
 
         canvas.getViewport().update(width, height, true);
     }
@@ -423,7 +423,7 @@ public class Scene {
     public void __resume() {
         isActive = true;
 
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(resumeIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(resumeIter));
     }
 
     /**
@@ -433,13 +433,13 @@ public class Scene {
     public void __pause() {
         isActive = false;
 
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(pauseIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(pauseIter));
     }
 
     private void updateComponents() {
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(preUpdateIter));
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(updateIter));
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(postUpdateIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(preUpdateIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(updateIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(postUpdateIter));
     }
 
     /**
@@ -477,13 +477,13 @@ public class Scene {
         ScreenUtils.clear(backgroundColor);
 
         // Before Render
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(preRenderIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(preRenderIter));
 
         // Render
         for (GameCamera camera : cameras) {
             camera.__preRender();
 
-            forEachGameObject(gameObject -> gameObject.__forEachComponent(component -> {
+            forEachGameObject(gameObject -> gameObject.forEachComponent(component -> {
                 if (component.getRenderCamera() == camera)
                     component.render();
             }));
@@ -492,7 +492,7 @@ public class Scene {
         }
 
         // After Render
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(postRenderIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(postRenderIter));
     }
 
     protected void renderDebugDrawings() {
@@ -500,17 +500,17 @@ public class Scene {
 
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugFilledIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(debugFilledIter));
         shapeRenderer.end();
 
         // Line
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugLineIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(debugLineIter));
         shapeRenderer.end();
 
         // Point
         shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugPointIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(debugPointIter));
         shapeRenderer.end();
     }
 
@@ -519,7 +519,7 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __destroy() {
-        forEachGameObject(gameObject -> gameObject.__forEachComponent(destroyIter));
+        forEachGameObject(gameObject -> gameObject.forEachComponent(destroyIter));
 
         canvas.dispose();
 
