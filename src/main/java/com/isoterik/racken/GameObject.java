@@ -52,8 +52,10 @@ public class GameObject {
      */
     public void __setHostScene(Scene hostScene) {
         this.hostScene = hostScene;
-        for (Component comp : components)
+        for (Component comp : components) {
             comp.__setHostScene(hostScene);
+            comp.setRenderCamera(hostScene.getMainCamera());
+        }
     }
 
     /**
@@ -103,6 +105,7 @@ public class GameObject {
         // If this game object is already added to a scene then we need to alert the component
         if (hostScene != null) {
             component.__setHostScene(hostScene);
+            component.setRenderCamera(hostScene.getMainCamera());
             component.start();
         }
 
@@ -206,15 +209,14 @@ public class GameObject {
     { return components.contains(component, true); }
 
     /**
-     * Calls the given IterationListener on all components attached to this game object.
-     * This method is used internally by the system. While it is safe to call it, you usually don't need to.
+     * Calls the given iteration listener on all components attached to this game object.
      * @param iterationListener the iteration listener
      */
-    public void __forEachComponent(__ComponentIterationListener iterationListener) {
+    public void forEachComponent(ComponentIterationListener iterationListener) {
         PoolableArrayIterator<Component> componentArrayIterator = componentIteratorPool.obtain();
 
         while (componentArrayIterator.hasNext())
-            iterationListener.onComponent(componentArrayIterator.next());
+            iterationListener.onIterate(componentArrayIterator.next());
 
         componentIteratorPool.free(componentArrayIterator);
     }
@@ -231,11 +233,11 @@ public class GameObject {
     /**
      * An iteration listener that can be used to iterate the components of a {@link GameObject}.
      */
-    public interface __ComponentIterationListener {
-        void onComponent(Component component);
+    public interface ComponentIterationListener {
+        void onIterate(Component component);
     }
 
-    private class ComponentIteratorPool extends Pool<PoolableArrayIterator<Component>> {
+    private static class ComponentIteratorPool extends Pool<PoolableArrayIterator<Component>> {
         private final Array<Component> componentArray;
 
         public ComponentIteratorPool(Array<Component> componentArray) {

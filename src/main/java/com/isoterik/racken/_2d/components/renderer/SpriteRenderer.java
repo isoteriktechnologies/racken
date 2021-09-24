@@ -223,23 +223,18 @@ public class SpriteRenderer extends Component {
         if (!visible)
             return;
 
-        // Use the default mainCamera if none is provided
-        if (renderCamera == null) {
-            GameCamera camera = scene.getMainCamera();
-            if (!(camera instanceof GameCamera2d))
-                return;
-
-            renderCamera = (GameCamera2d) camera;
-        }
+        // Cannot render without a camera
+        if (renderCamera == null)
+            return;
 
         // If culling, the sprite should be rendered only if it can be seen by the camera
         if (cull) {
             if (gameObject.transform.isInCameraFrustum(renderCamera.getCamera())) {
-                drawSprite(renderCamera);
+                drawSprite(getRenderCamera());
             }
         }
         else {
-            drawSprite(renderCamera);
+            drawSprite(getRenderCamera());
         }
     }
 

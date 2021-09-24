@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken._2d.GameCamera2d;
 import com.isoterik.racken._2d.components.renderer.SpriteRenderer;
 import com.isoterik.racken.input.InputManager;
 import com.isoterik.racken.utils.GameWorldUnits;
+import com.isoterik.racken.utils.PoolableArrayIterator;
 
 /**
  * A Scene contains the {@link GameObject}s of your game. Think of each Scene as a unique level of your game.
@@ -49,7 +51,7 @@ public class Scene {
     private float deltaTime;
 
     // These iteration listeners prevent us from creating new instances every time!
-    protected GameObject.__ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
+    protected GameObject.ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
             resumeIter, preUpdateIter, updateIter, resizeIter, postUpdateIter, renderIter,
             debugLineIter, debugFilledIter, debugPointIter, destroyIter;
 
@@ -70,8 +72,8 @@ public class Scene {
 
     private int resizedWidth, resizedHeight;
 
-    // An array of game objects
-    private Array<GameObject> gameObjects = new Array<>();
+    private final Array<GameObject> gameObjects = new Array<>();
+    private final GameObjectIteratorPool gameObjectIteratorPool = new GameObjectIteratorPool(gameObjects);
 
     private final Array<GameCamera> cameras = new Array<>();
     private GameCamera mainCamera;
@@ -158,7 +160,7 @@ public class Scene {
                 component.renderShapePoint(shapeRenderer);
         };
 
-        destroyIter = Component::destroy;
+        destroyIter = component -> component.destroy();
 
         mainCamera = new GameCamera2d();
         addCamera(mainCamera);
@@ -414,7 +416,7 @@ public class Scene {
         gameObject.__setHostScene(this);
         layer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -431,7 +433,7 @@ public class Scene {
         gameObject.__setHostScene(this);
         layer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -442,7 +444,7 @@ public class Scene {
         gameObject.__setHostScene(this);
         defaultLayer.addGameObject(gameObject);
 
-        gameObject.__forEachComponent(startIter);
+        gameObject.forEachComponent(startIter);
     }
 
     /**
@@ -488,17 +490,19 @@ public class Scene {
     }
 
     /**
-     *
-     * @return all the game objects added to this scene
+     * Returns all the game objects this scene
+     * @param out the output array (can be null)
+     * @return all the game objects in this scene
      */
-    public Array<GameObject> getGameObjects() {
-        Array<GameObject> gameObjects = new Array<>();
+    public Array<GameObject> getGameObjects(Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
 
         for (Layer layer : layers) {
-            gameObjects.addAll(layer.getGameObjects());
+            out.addAll(layer.getGameObjects());
         }
 
-        return gameObjects;
+        return out;
     }
 
     /**
@@ -565,6 +569,22 @@ public class Scene {
     }
 
     /**
+     * Calls the given iteration listener on all game objects in this scene
+     * @param iterationListener the iteration listener
+     */
+    public void forEachGameObject(GameObjectIterationListener iterationListener) {
+        gameObjects.clear();
+        getGameObjects(gameObjects);
+
+        PoolableArrayIterator<GameObject> iterator = gameObjectIteratorPool.obtain();
+
+        while (iterator.hasNext())
+            iterationListener.onIterate(iterator.next());
+
+        gameObjectIteratorPool.free(iterator);
+    }
+
+    /**
      * Sets the background color of this scene if it uses a {@link GameCamera2d}
      * @param color the background color
      */
@@ -573,22 +593,6 @@ public class Scene {
         
         if (camera instanceof GameCamera2d)
             ((GameCamera2d)camera).setBackgroundColor(color);
-    }
-
-    private void updateComponents(Array<GameObject> gameObjects, final float deltaTime) {
-        this.deltaTime = deltaTime;
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(preUpdateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(updateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(postUpdateIter);
-        }
     }
 
     /**
@@ -601,16 +605,14 @@ public class Scene {
         this.resizedWidth = width;
         this.resizedHeight = height;
 
-        gameObjects = getGameObjects();
+        for (GameCamera camera : cameras)
+            camera.__resize(width, height);
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(resizeIter);
+            go.forEachComponent(resizeIter);
         }
 
         canvas.getViewport().update(width, height, true);
-
-        for (GameCamera camera : cameras)
-            camera.__resize(width, height);
     }
 
     /**
@@ -620,10 +622,10 @@ public class Scene {
     public void __resume() {
         isActive = true;
 
-        gameObjects = getGameObjects();
-
+        gameObjects.clear();
+        getGameObjects(gameObjects);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(resumeIter);
+            go.forEachComponent(resumeIter);
         }
     }
 
@@ -634,10 +636,24 @@ public class Scene {
     public void __pause() {
         isActive = false;
 
-        gameObjects = getGameObjects();
+        gameObjects.clear();
+        getGameObjects(gameObjects);
+        for (GameObject go : gameObjects) {
+            go.forEachComponent(pauseIter);
+        }
+    }
+
+    private void updateComponents() {
+        for (GameObject go : gameObjects) {
+            go.forEachComponent(preUpdateIter);
+        }
 
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(pauseIter);
+            go.forEachComponent(updateIter);
+        }
+
+        for (GameObject go : gameObjects) {
+            go.forEachComponent(postUpdateIter);
         }
     }
 
@@ -649,11 +665,11 @@ public class Scene {
     public void __update(final float deltaTime) {
         this.deltaTime = deltaTime;
 
+        gameObjects.clear();
+        getGameObjects(gameObjects);
+
         input.__update();
-
-        gameObjects = getGameObjects();
-
-        updateComponents(gameObjects, deltaTime);
+        updateComponents();
 
         canvas.act(deltaTime);
     }
@@ -663,7 +679,8 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __render() {
-        gameObjects = getGameObjects();
+        gameObjects.clear();
+        getGameObjects(gameObjects);
 
         // Render
         render();
@@ -677,20 +694,28 @@ public class Scene {
     }
 
     protected void render() {
-
         // Before Render
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(preRenderIter);
+            go.forEachComponent(preRenderIter);
         }
 
         // Render
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(renderIter);
+        for (GameCamera camera : cameras) {
+            camera.__preRender();
+
+            for (GameObject gameObject : gameObjects) {
+                gameObject.forEachComponent(component -> {
+                    if (component.getRenderCamera() == camera)
+                        component.render();
+                });
+            }
+
+            camera.__postRender();
         }
 
         // After Render
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(postRenderIter);
+            go.forEachComponent(postRenderIter);
         }
     }
 
@@ -700,21 +725,21 @@ public class Scene {
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugFilledIter);
+            go.forEachComponent(debugFilledIter);
         }
         shapeRenderer.end();
 
         // Line
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugLineIter);
+            go.forEachComponent(debugLineIter);
         }
         shapeRenderer.end();
 
         // Point
         shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugPointIter);
+            go.forEachComponent(debugPointIter);
         }
         shapeRenderer.end();
     }
@@ -724,10 +749,8 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __destroy() {
-        gameObjects = getGameObjects();
-
         for (GameObject go : gameObjects) {
-            go.__forEachComponent(destroyIter);
+            go.forEachComponent(destroyIter);
         }
 
         canvas.dispose();
@@ -836,4 +859,47 @@ public class Scene {
      */
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
+
+    public interface GameObjectIterationListener {
+        void onIterate(GameObject gameObject);
+    }
+
+    private static class GameObjectIteratorPool extends Pool<PoolableArrayIterator<GameObject>> {
+        private final Array<GameObject> gameObjectArray;
+
+        public GameObjectIteratorPool(Array<GameObject> gameObjectArray) {
+            this.gameObjectArray = gameObjectArray;
+        }
+
+        @Override
+        protected PoolableArrayIterator<GameObject> newObject() {
+            return new PoolableArrayIterator<>(gameObjectArray);
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

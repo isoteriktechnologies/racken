@@ -1,9 +1,11 @@
 package com.isoterik.racken.test;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.isoterik.racken.GameObject;
 import com.isoterik.racken.Scene;
+import com.isoterik.racken._2d.components.renderer.SpriteRenderer;
 import com.isoterik.racken._2d.components.renderer.TiledMapRenderer;
 import com.isoterik.racken.asset.GameAssetsLoader;
 
@@ -26,11 +28,12 @@ public class CameraTest extends Scene {
     public CameraTest() {
         setBackgroundColor(Color.BLACK);
 
-        GameObject tiledMapObject = GameObject.newInstance("TiledMap");
-        addGameObject(tiledMapObject);
-        tiledMapObject.addComponent(tiledMapRenderer);
+//        GameObject tiledMapObject = GameObject.newInstance("TiledMap");
+//        addGameObject(tiledMapObject);
+//        tiledMapObject.addComponent(tiledMapRenderer);
 
-        removeGameObject(mainCameraObject);
+        GameObject object = newSpriteObject(new Texture("badlogic.jpg"));
+        addGameObject(object);
     }
 }
 

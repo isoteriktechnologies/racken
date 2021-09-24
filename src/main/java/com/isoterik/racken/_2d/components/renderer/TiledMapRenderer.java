@@ -41,8 +41,6 @@ public class TiledMapRenderer extends Component {
 
     protected MapRenderer tiledMapRenderer;
 
-    protected GameCamera2d camera;
-
     /**
      * Creates a new instance given a tiled map and the unit scale to use.
      * The unit scale is the equivalence of 1 pixel in the game (1 / Pixels Per Unit).
@@ -75,18 +73,27 @@ public class TiledMapRenderer extends Component {
     { this(new TmxMapLoader().load(mapFileName), unitScale); }
 
     /**
-     * @return the current camera used for projection
+     * Returns the camera this component renders with
+     * @return the camera this component renders with
      */
-    public GameCamera2d getCamera() {
-        return camera;
+    public GameCamera2d getRenderCamera() {
+        if (renderCamera == null)
+            return null;
+
+        return (GameCamera2d) renderCamera;
     }
 
     /**
-     * Sets the camera to use for projection.
-     * @param camera the camera
+     * Sets the camera this component renders with.
+     * @throws IllegalArgumentException if the camera is not an instance of GameCamera2d
+     * @param renderCamera the camera
      */
-    public void setCamera(GameCamera2d camera) {
-        this.camera = camera;
+    @Override
+    public void setRenderCamera(GameCamera renderCamera) {
+        if (! (renderCamera instanceof GameCamera2d))
+            throw new IllegalArgumentException("Only GameCamera2d can be used by this component");
+
+        super.setRenderCamera(renderCamera);
     }
 
     /**
@@ -98,19 +105,13 @@ public class TiledMapRenderer extends Component {
 
     @Override
     public void preUpdate(float deltaTime) {
-        if (camera == null) {
-            GameCamera cam = scene.getMainCamera();
-            if (cam instanceof GameCamera2d)
-                camera = (GameCamera2d) cam;
-        }
-
-        if (camera != null)
-            tiledMapRenderer.setView(camera.getCamera());
+        if (renderCamera != null && renderCamera instanceof GameCamera2d)
+            tiledMapRenderer.setView(((GameCamera2d)renderCamera).getCamera());
     }
 
     @Override
     public void render() {
-        if (camera != null)
+        if (renderCamera != null && renderCamera instanceof GameCamera2d)
             renderTiledMap();
     }
 
