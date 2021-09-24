@@ -219,7 +219,7 @@ public class SpriteRenderer extends Component {
 
         // Use the default mainCamera if none is provided
         if (gameCamera == null) {
-            GameCamera camera = scene.getMainCamera().getComponent(GameCamera.class);
+            GameCamera camera = scene.getMainCamera();
             if (!(camera instanceof GameCamera2d))
                 return;
 

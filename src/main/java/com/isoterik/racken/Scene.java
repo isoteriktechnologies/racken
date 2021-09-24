@@ -163,7 +163,7 @@ public class Scene {
 
         destroyIter = Component::destroy;
 
-        GameCamera camera = new GameCamera2d();
+        GameCamera camera =  new GameCamera2d();
 
         mainCameraObject = GameObject.newInstance("MainCamera");
         mainCameraObject.addComponent(camera);
@@ -296,7 +296,14 @@ public class Scene {
         mainCameraObject.removeComponent(getMainCamera());
         mainCameraObject.addComponent(mainCamera);
     }
-    
+
+    /**
+     *
+     * @return the main camera used for projecting this scene.
+     */
+    public GameCamera getMainCamera()
+    { return mainCameraObject.getComponent(GameCamera.class); }
+
     /**
      * Finds a layer, given the name.
      * @param name the name of the layer to find.
@@ -551,7 +558,7 @@ public class Scene {
      */
     public void setBackgroundColor(Color color) {
         GameCamera camera = getMainCamera();
-        
+
         if (camera instanceof GameCamera2d)
             ((GameCamera2d)camera).setBackgroundColor(color);
     }

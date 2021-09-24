@@ -29,8 +29,6 @@ public class CameraTest extends Scene {
         GameObject tiledMapObject = GameObject.newInstance("TiledMap");
         addGameObject(tiledMapObject);
         tiledMapObject.addComponent(tiledMapRenderer);
-
-        removeGameObject(mainCameraObject);
     }
 }
 
