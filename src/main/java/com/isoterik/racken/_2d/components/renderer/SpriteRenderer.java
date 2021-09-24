@@ -30,6 +30,8 @@ public class SpriteRenderer extends Component {
 
     protected Vector3 temp = new Vector3();
 
+    protected GameCamera2d gameCamera;
+
     /**
      * Creates a new instance given a sprite and {@link GameWorldUnits} to use for converting the sprite dimension to world units.
      * @param sprite an instance of {@link TextureRegion}
@@ -56,27 +58,19 @@ public class SpriteRenderer extends Component {
     { this(new TextureRegion(sprite), gameWorldUnits); }
 
     /**
-     * Returns the camera this component renders with
-     * @return the camera this component renders with
+     * Returns the current {@link GameCamera2d} used.
+     * @return the current {@link GameCamera2d} used.
      */
-    public GameCamera2d getRenderCamera() {
-        if (renderCamera == null)
-            return null;
-
-        return (GameCamera2d) renderCamera;
+    public GameCamera2d getGameCamera() {
+        return gameCamera;
     }
 
     /**
-     * Sets the camera this component renders with.
-     * @throws IllegalArgumentException if the camera is not an instance of GameCamera2d
-     * @param renderCamera the camera
+     * Sets the current {@link GameCamera2d} used.
+     * @param gameCamera the current {@link GameCamera2d}
      */
-    @Override
-    public void setRenderCamera(GameCamera renderCamera) {
-        if (! (renderCamera instanceof GameCamera2d))
-            throw new IllegalArgumentException("Only GameCamera2d can be used by this component");
-
-        super.setRenderCamera(renderCamera);
+    public void setGameCamera(GameCamera2d gameCamera) {
+        this.gameCamera = gameCamera;
     }
 
     /**
@@ -224,22 +218,22 @@ public class SpriteRenderer extends Component {
             return;
 
         // Use the default mainCamera if none is provided
-        if (renderCamera == null) {
-            GameCamera camera = scene.getMainCamera();
+        if (gameCamera == null) {
+            GameCamera camera = scene.getMainCamera().getComponent(GameCamera.class);
             if (!(camera instanceof GameCamera2d))
                 return;
 
-            renderCamera = (GameCamera2d) camera;
+            gameCamera = (GameCamera2d) camera;
         }
 
         // If culling, the sprite should be rendered only if it can be seen by the camera
         if (cull) {
-            if (gameObject.transform.isInCameraFrustum(renderCamera.getCamera())) {
-                drawSprite(renderCamera);
+            if (gameObject.transform.isInCameraFrustum(gameCamera.getCamera())) {
+                drawSprite(gameCamera);
             }
         }
         else {
-            drawSprite(renderCamera);
+            drawSprite(gameCamera);
         }
     }
 
