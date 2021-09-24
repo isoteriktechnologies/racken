@@ -13,7 +13,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  *
  * @author isoteriksoftware
  */
-public class GameCamera extends Component {
+public abstract class GameCamera {
     protected Camera camera;
 
     protected Viewport viewport;
@@ -87,8 +87,11 @@ public class GameCamera extends Component {
     public Camera getCamera()
     { return camera; }
 
-    @Override
-    public void resize(int newScreenWidth, int newScreenHeight) {
+    public void __resize(int newScreenWidth, int newScreenHeight) {
         viewport.update(newScreenWidth, newScreenHeight, centerCameraOnResize);
     }
+
+    public abstract void __preRender();
+    public abstract void __postRender();
+    public abstract void __destroy();
 }

@@ -1,8 +1,8 @@
 package com.isoterik.racken._2d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -84,51 +84,32 @@ public class GameCamera2d extends GameCamera {
 
     @Override
     public void setup(Viewport viewport) {
-        super.setup(viewport);
-
         if (camera == null || !(camera instanceof OrthographicCamera)) {
             camera = new OrthographicCamera(viewport.getWorldWidth(), viewport.getWorldHeight());
             getCamera().setToOrtho(false, viewport.getWorldWidth(), viewport.getWorldHeight());
             viewport.setCamera(camera);
             camera.update();
+            viewport.update(0, 0, true);
         }
 
-        viewport.apply(centerCameraOnResize);
+        super.setup(viewport);
     }
 
-    @Override
-    public void attach() {
-        if (spriteBatch == null)
-            spriteBatch = new SpriteBatch();
-    }
-
-    @Override
-    public void detach() {
+    public void __destroy() {
         if (spriteBatch != null) {
             spriteBatch.dispose();
             spriteBatch = null;
         }
     }
 
-    @Override
-    public void destroy() {
-        if (spriteBatch != null) {
-            spriteBatch.dispose();
-            spriteBatch = null;
-        }
-    }
-
-    @Override
-    public void preRender() {
+    public void __preRender() {
         ScreenUtils.clear(backgroundColor);
         camera.update();
-        viewport.apply(centerCameraOnResize);
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
     }
 
-    @Override
-    public void postRender() {
+    public void __postRender() {
         spriteBatch.end();
     }
 }

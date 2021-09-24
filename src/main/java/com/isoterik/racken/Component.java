@@ -19,6 +19,7 @@ public class Component {
     protected GameObject gameObject;
     protected Scene scene;
     protected InputManager input;
+    protected GameCamera renderCamera;
 
     protected boolean enabled = true;
 
@@ -125,6 +126,22 @@ public class Component {
      * You should dispose all scene wide resources here.
      */
     public void destroy() {}
+
+    /**
+     * Returns the camera this component renders with
+     * @return the camera this component renders with
+     */
+    public GameCamera getRenderCamera() {
+        return renderCamera;
+    }
+
+    /**
+     * Sets the camera this component renders with
+     * @param renderCamera the camera
+     */
+    public void setRenderCamera(GameCamera renderCamera) {
+        this.renderCamera = renderCamera;
+    }
 
     /**
      * Called when a new component is attached to the host game object.
@@ -287,42 +304,10 @@ public class Component {
     }
 
     /**
-     * Removes a game object from the host scene. This will have no effect if there is no existing host scene.
-     * This has no effect if there is no existing valid {@link Scene}.
-     * @param gameObject the game object.
-     * @param layer the layer where the game object is added.
-     * @return whether the game object was removed.
-     */
-    public boolean removeGameObject(GameObject gameObject, Layer layer) {
-        if (scene != null) {
-            return scene.removeGameObject(gameObject, layer);
-        }
-
-        return false;
-    }
-
-    /**
-     * Removes a game object from the host scene. This will have no effect if there is no existing host scene.
-     * This has no effect if there is no existing valid {@link Scene}.
-     * @param gameObject the game object.
-     * @param layerName the name of the layer where the game object is added.
-     * @return whether the game object was removed.
-     *
-     */
-    public boolean removeGameObject(GameObject gameObject, String layerName) {
-        if (scene != null) {
-            return scene.removeGameObject(gameObject, layerName);
-        }
-
-        return false;
-    }
-
-    /**
-     * Removes a game object from the host scene. This will have no effect if there is no existing host scene.
+     * Removes a game object from the host scene.
      * This has no effect if there is no existing valid {@link Scene}.
      * @param gameObject the game object.
      * @return whether the game object was removed.
-     *
      */
     public boolean removeGameObject(GameObject gameObject) {
         if (scene != null) {
@@ -333,36 +318,22 @@ public class Component {
     }
 
     /**
-     * Adds a game object to the host scene given a layer to add it to.
-     * This has no effect if there is no existing valid {@link Scene}.
-     * @param gameObject the game object to add
-     * @param layer the layer to add the game object to
-     * @throws IllegalArgumentException if the given layer does not exist in the host scene.
-     */
-    public void addGameObject(GameObject gameObject, Layer layer) throws IllegalArgumentException {
-        if (scene != null)
-            scene.addGameObject(gameObject, layer);
-    }
-
-    /**
-     * Adds a game object to the host scene given the name of a layer to add it to.
-     * This has no effect if there is no existing valid {@link Scene}.
-     * @param gameObject the game object to add
-     * @param layerName the name of the layer to add the game object to
-     * @throws IllegalArgumentException if there is no existing layer with such name
-     */
-    public void addGameObject(GameObject gameObject, String layerName) throws IllegalArgumentException {
-        if (scene != null)
-            scene.addGameObject(gameObject, layerName);
-    }
-
-    /**
-     * Adds a game object to the host scene. The game object is added to the default layer.
+     * Adds a game object to the host scene.
      * This has no effect if there is no existing valid {@link Scene}.
      * @param gameObject the game object to add.
      */
     public void addGameObject(GameObject gameObject) {
         if (scene != null)
             scene.addGameObject(gameObject);
+    }
+
+    /**
+     * Calls the given iteration listener on every game objects in the scene.
+     * This has no effect if there is no existing valid {@link Scene}.
+     * @param iterationListener the iteration listener
+     */
+    public void forEachGameObject(Scene.GameObjectIterationListener iterationListener) {
+        if (scene != null)
+            scene.forEachGameObject(iterationListener);
     }
 }

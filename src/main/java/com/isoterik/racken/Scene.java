@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken._2d.GameCamera2d;
@@ -21,9 +22,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  * support only one main camera for projection.
  * <p>
  *
- * {@link GameObject}s are manged with {@link Layer}s.
- * Layers are processed top-down; layers added first are processed first (this can be used to manipulate how GameObjects are rendered.)
- * A default layer is provided so you don't have to use layers if you don't need to.
+ * GameObjects are processed top-down; game objects added first are processed first (this can be used to manipulate how GameObjects are rendered.)
  * <p>
  * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive input and render; you don't have do these yourself.
  *
@@ -32,15 +31,6 @@ import com.isoterik.racken.utils.GameWorldUnits;
 public class Scene {
     /** A reference to the shared instance of {@link Racken} */
     protected Racken racken;
-
-    /** The name of the default layer. Use this to add {@link GameObject}s to the default layer. */
-    public static final String DEFAULT_LAYER = "MGDX_DEFAULT_LAYER";
-
-    private final Layer defaultLayer;
-    protected Array<Layer> layers;
-
-    /** The main camera object used for projecting a portion of the scene. */
-    protected GameObject mainCameraObject;
 
     /** The default {@link GameWorldUnits} used for this scene */
     protected GameWorldUnits gameWorldUnits;
@@ -62,9 +52,6 @@ public class Scene {
     /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing UI elements */
     protected Stage canvas;
 
-    /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing GameObjects that uses the Scene2d API. */
-    protected Stage worldCanvas;
-
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
 
@@ -74,10 +61,14 @@ public class Scene {
     /** Determines whether this stack can be stacked. */
     protected boolean stackable = true;
 
+    protected GameCamera mainCamera;
+
     private int resizedWidth, resizedHeight;
 
     // An array of game objects
-    Array<GameObject> gameObjects = new Array<>();
+    protected final SnapshotArray<GameObject> gameObjects = new SnapshotArray<>(GameObject.class);
+
+    protected final Array<GameCamera> cameras = new Array<>();
 
     /**
      * Creates a new instance.
@@ -89,10 +80,6 @@ public class Scene {
 
         gameWorldUnits = new GameWorldUnits(racken.defaultSettings.VIEWPORT_WIDTH, racken.defaultSettings.VIEWPORT_HEIGHT,
                 racken.defaultSettings.PIXELS_PER_UNIT);
-
-        defaultLayer = new Layer(DEFAULT_LAYER);
-        layers = new Array<>();
-        layers.add(defaultLayer);
 
         input = new InputManager(this);
 
@@ -163,15 +150,11 @@ public class Scene {
 
         destroyIter = Component::destroy;
 
-        GameCamera camera =  new GameCamera2d();
-
-        mainCameraObject = GameObject.newInstance("MainCamera");
-        mainCameraObject.addComponent(camera);
-        addGameObject(mainCameraObject);
+        mainCamera = new GameCamera2d();
+        addCamera(mainCamera);
 
         setupCanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
                 gameWorldUnits.getScreenHeight()));
-        setupWorldCanvas(camera.getViewport());
 
         shapeRenderer = new ShapeRenderer();
     }
@@ -231,14 +214,14 @@ public class Scene {
      * Use this method to decide if those debug lines should be rendered or not.
      * @param renderCustomDebugLines whether custom debug lines are rendered
      */
-    public void setRenderCustomDebugLines(boolean renderCustomDebugLines)
+    public void setRenderDebugLines(boolean renderCustomDebugLines)
     { this.renderCustomDebugLines = renderCustomDebugLines; }
 
     /**
      *
      * @return whether custom debug lines are rendered or not
      */
-    public boolean isRenderCustomDebugLines()
+    public boolean isRenderDebugLines()
     { return renderCustomDebugLines; }
 
     /**
@@ -255,24 +238,11 @@ public class Scene {
     }
 
     /**
-     * By default, the animation canvas (an instance of {@link Stage}) is setup with the same viewport as the main camera
-     * Use this method to change the viewport to your desired viewport.
-     * @param viewport the viewport for scaling UI elements
-     */
-    public void setupWorldCanvas(Viewport viewport) {
-        worldCanvas = new Stage(viewport);
-    }
-
-    /**
      *
      * @return the {@link Stage} used for managing UI elements.
      */
     public Stage getCanvas()
     { return canvas; }
-
-    public Stage getWorldCanvas() {
-        return worldCanvas;
-    }
 
     /**
      * A scene becomes active when the scene is resumed. It goes back to an inactive state when the scene is paused.
@@ -289,179 +259,73 @@ public class Scene {
     { return input; }
 
     /**
-     * Changes the camera used for projecting this scene. This only changes the attached {@link GameCamera} and not the gameObject itself
+     * Changes the camera used for projecting this scene.
      * @param mainCamera the {@link GameCamera} for projecting this scene.
      */
-    public void setupMainCamera(GameCamera mainCamera) {
-        mainCameraObject.removeComponent(getMainCamera());
-        mainCameraObject.addComponent(mainCamera);
+    public void setMainCamera(GameCamera mainCamera) {
+        removeMainCamera();
+        this.mainCamera = mainCamera;
+        addCamera(mainCamera);
     }
 
     /**
-     *
+     * Returns the main camera used for projecting this scene.
      * @return the main camera used for projecting this scene.
      */
     public GameCamera getMainCamera()
-    { return mainCameraObject.getComponent(GameCamera.class); }
+    { return mainCamera; }
 
     /**
-     * Finds a layer, given the name.
-     * @param name the name of the layer to find.
-     * @return the layer if found or null if not found
+     * Adds a camera to this scene
+     * @param camera the camera to add
      */
-    public Layer findLayer(String name) {
-        for (Layer layer : layers) {
-            if (layer.getName().equals(name))
-                return layer;
+    public void addCamera(GameCamera camera) {
+        if (! cameras.contains(camera, true))
+            cameras.add(camera);
+    }
+
+    /**
+     * Removes a camera from this scene
+     * @param camera the camera to remove
+     */
+    public void removeCamera(GameCamera camera) {
+        cameras.removeValue(camera, true);
+    }
+
+    /**
+     * Removes the main camera of this scene.
+     * This will dispose all resources used by the camera too.
+     */
+    public void removeMainCamera() {
+        if (mainCamera != null) {
+            mainCamera.__destroy();
+            cameras.removeValue(mainCamera, true);
         }
-
-        return null;
     }
 
     /**
-     *
-     * @return the default layer for this scene.
+     * Calls the given iteration listener on every game objects in this scene
+     * @param iterationListener the iteration listener
      */
-    public Layer getDefaultLayer()
-    { return defaultLayer; }
+    public void forEachGameObject(GameObjectIterationListener iterationListener) {
+        GameObject[] array = gameObjects.begin();
 
-    /**
-     * Checks if a given layer is one of the layers of this scene.
-     * @param layer the layer to check
-     * @return true if the layer exists. false otherwise
-     */
-    public boolean hasLayer(Layer layer)
-    { return layers.contains(layer, true); }
+        for (GameObject gameObject : array)
+            if (gameObject != null)
+                iterationListener.onIterate(gameObject);
 
-    /**
-     * Checks if a layer with a given name is one of the layers of this scene.
-     * @param layerName the name of the layer.
-     * @return true if the layer exists. false otherwise.
-     */
-    public boolean hasLayer(String layerName) {
-        for (Layer layer : layers) {
-            if (layer.getName().equals(layerName))
-                return true;
-        }
-
-        return false;
+        gameObjects.end();
     }
-
-    /**
-     * Adds a new layer to this scene
-     * @param layer the layer to add
-     */
-    public void addLayer(Layer layer)
-    { layers.add(layer); }
-
-    /**
-     * Removes a given layer from this scene.
-     * <strong>This will also remove all game objects that belongs to the layer!</strong>
-     * @param layer the layer to remove
-     * @throws IllegalArgumentException if the layer is the default layer for this scene.
-     */
-    public void removeLayer(Layer layer) throws IllegalArgumentException {
-        if (layer == defaultLayer)
-            throw new IllegalArgumentException("You cannot remove the default layer!");
-
-        layers.removeValue(layer, true);
-    }
-
-    /**
-     * Removes a layer from this scene given the name of the layer to remove.
-     * <strong>This will also remove all game objects that belongs to the layer!</strong>
-     * @param layerName the name of the layer to remove
-     * @throws IllegalArgumentException if the layer is the default layer for this scene.
-     */
-    public void removeLayer(String layerName) throws IllegalArgumentException {
-        if (layerName.equals(DEFAULT_LAYER))
-            throw new IllegalArgumentException("You cannot remove the default layer!");
-
-        Layer layer = findLayer(layerName);
-        if (layer != null)
-            layers.removeValue(layer, true);
-    }
-
-    /**
-     *
-     * @return the layers of this scene
-     */
-    public Array<Layer> getLayers()
-    { return layers; }
 
     /**
      * Adds a game object to this scene given a layer to add it to.
      * @param gameObject the game object to add
-     * @param layer the layer to add the game object to
      * @throws IllegalArgumentException if the given layer does not exist in this scene
-     */
-    public void addGameObject(GameObject gameObject, Layer layer) throws IllegalArgumentException {
-        if (!hasLayer(layer))
-            throw new IllegalArgumentException("This layer does not exist in this scene");
-
-        gameObject.__setHostScene(this);
-        layer.addGameObject(gameObject);
-
-        gameObject.__forEachComponent(startIter);
-    }
-
-    /**
-     * Adds a game object to this scene given the name of a layer to add it to.
-     * @param gameObject the game object to add
-     * @param layerName the name of the layer to add the game object to
-     * @throws IllegalArgumentException if there is no existing layer with such name
-     */
-    public void addGameObject(GameObject gameObject, String layerName) throws IllegalArgumentException {
-        Layer layer = findLayer(layerName);
-        if (layer == null)
-            throw new IllegalArgumentException("This layer does not exist in this scene");
-
-        gameObject.__setHostScene(this);
-        layer.addGameObject(gameObject);
-
-        gameObject.__forEachComponent(startIter);
-    }
-
-    /**
-     * Adds a game object to this scene. The game object is added to the default layer.
-     * @param gameObject the game object to add.
      */
     public void addGameObject(GameObject gameObject) {
         gameObject.__setHostScene(this);
-        defaultLayer.addGameObject(gameObject);
-
+        gameObjects.add(gameObject);
         gameObject.__forEachComponent(startIter);
-    }
-
-    /**
-     * Removes a game object from this scene given the layer where the game object belongs to.
-     * @param gameObject the game object to remove
-     * @param layer the layer
-     * @return true if the game object was removed. false otherwise.
-     */
-    public boolean removeGameObject(GameObject gameObject, Layer layer) {
-        if (!hasLayer(layer))
-            return false;
-
-        gameObject.__removeFromScene();
-        gameObject.__setHostScene(null);
-        return layer.removeGameObject(gameObject);
-    }
-
-    /**
-     * Removes a game object from this scene given the name of the name where the game objects belongs to.
-     * @param gameObject the game object to remove
-     * @param layerName the name of the layer
-     * @return true if the game object was removed. false otherwise.
-     */
-    public boolean removeGameObject(GameObject gameObject, String layerName) {
-        Layer layer = findLayer(layerName);
-        if (layer == null)
-            return false;
-
-        gameObject.__removeFromScene();
-        gameObject.__setHostScene(null);
-        return layer.removeGameObject(gameObject);
     }
 
     /**
@@ -472,20 +336,14 @@ public class Scene {
     public boolean removeGameObject(GameObject gameObject) {
         gameObject.__removeFromScene();
         gameObject.__setHostScene(null);
-        return defaultLayer.removeGameObject(gameObject);
+        return gameObjects.removeValue(gameObject, true);
     }
 
     /**
      *
      * @return all the game objects added to this scene
      */
-    public Array<GameObject> getGameObjects() {
-        Array<GameObject> gameObjects = new Array<>();
-
-        for (Layer layer : layers) {
-            gameObjects.addAll(layer.getGameObjects());
-        }
-
+    public SnapshotArray<GameObject> getGameObjects() {
         return gameObjects;
     }
 
@@ -495,9 +353,8 @@ public class Scene {
      * @return the first gameObject with the given tag or null if none found.
      */
     public GameObject findGameObject(String tag) {
-        for (Layer layer : layers) {
-            GameObject gameObject = layer.findGameObject(tag);
-            if (gameObject != null)
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.sameTag(tag))
                 return gameObject;
         }
 
@@ -507,49 +364,19 @@ public class Scene {
     /**
      * Finds all gameObjects with the given tag.
      * @param tag the gameObjects tag.
+     * @param out the output array (can be null)
      * @return all gameObjects with the given tag or an empty array if none found.
      */
-    public Array<GameObject> findGameObjects(String tag) {
-        Array<GameObject> gameObjects = new Array<>();
+    public Array<GameObject> findGameObjects(String tag, Array<GameObject> out) {
+        if (out == null)
+            out = new Array<>();
 
-        for (Layer layer : layers)
-            gameObjects.addAll(layer.findGameObjects(tag));
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.sameTag(tag))
+                out.add(gameObject);
+        }
 
-        return gameObjects;
-    }
-
-    protected GameObject findGameObject(String tag, Layer layer) {
-        if (layer == null)
-            return null;
-
-        return layer.findGameObject(tag);
-    }
-
-    protected Array<GameObject> findGameObjects(String tag, Layer layer) {
-        if (layer == null)
-            return null;
-
-        return layer.findGameObjects(tag);
-    }
-
-    /**
-     * Given a layer's name, finds the first gameObject with the given tag.
-     * @param tag the gameObject's tag.
-     * @param layerName the layer's name
-     * @return the first gameObject with the given tag or null if neither the gameObject or the layer exists.
-     */
-    public GameObject findGameObject(String tag, String layerName) {
-        return findGameObject(tag, findLayer(layerName));
-    }
-
-    /**
-     * Given a layer's name, finds all gameObjects with the given tag.
-     * @param tag the gameObject's tag.
-     * @param layerName the layer's name
-     * @return all gameObjects with the given tag or an empty array if neither the gameObject or the layer exists.
-     */
-    public Array<GameObject> findGameObjects(String tag, String layerName) {
-        return findGameObjects(tag, findLayer(layerName));
+        return out;
     }
 
     /**
@@ -563,22 +390,6 @@ public class Scene {
             ((GameCamera2d)camera).setBackgroundColor(color);
     }
 
-    private void updateComponents(Array<GameObject> gameObjects, final float deltaTime) {
-        this.deltaTime = deltaTime;
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(preUpdateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(updateIter);
-        }
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(postUpdateIter);
-        }
-    }
-
     /**
      * Called when the screen is resized.
      * <strong>DO NOT CALL THIS METHOD!</strong>
@@ -589,11 +400,10 @@ public class Scene {
         this.resizedWidth = width;
         this.resizedHeight = height;
 
-        gameObjects = getGameObjects();
+        for (GameCamera camera : cameras)
+            camera.__resize(width, height);
 
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(resizeIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(resizeIter));
 
         canvas.getViewport().update(width, height, true);
     }
@@ -605,11 +415,7 @@ public class Scene {
     public void __resume() {
         isActive = true;
 
-        gameObjects = getGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(resumeIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(resumeIter));
     }
 
     /**
@@ -619,11 +425,13 @@ public class Scene {
     public void __pause() {
         isActive = false;
 
-        gameObjects = getGameObjects();
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(pauseIter));
+    }
 
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(pauseIter);
-        }
+    private void updateComponents() {
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(preUpdateIter));
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(updateIter));
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(postUpdateIter));
     }
 
     /**
@@ -636,11 +444,8 @@ public class Scene {
 
         input.__update();
 
-        gameObjects = getGameObjects();
+        updateComponents();
 
-        updateComponents(gameObjects, deltaTime);
-
-        worldCanvas.act(deltaTime);
         canvas.act(deltaTime);
     }
 
@@ -649,8 +454,6 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __render() {
-        gameObjects = getGameObjects();
-
         // Render
         render();
 
@@ -658,28 +461,28 @@ public class Scene {
         if (renderCustomDebugLines)
             renderDebugDrawings();
 
-        // Draw the world canvas
-        worldCanvas.draw();
-
         // Draw the UI
         canvas.draw();
     }
 
     protected void render() {
         // Before Render
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(preRenderIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(preRenderIter));
 
         // Render
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(renderIter);
+        for (GameCamera camera : cameras) {
+            camera.__preRender();
+
+            forEachGameObject(gameObject -> gameObject.__forEachComponent(component -> {
+                if (component.getRenderCamera() == camera)
+                    component.render();
+            }));
+
+            camera.__postRender();
         }
 
         // After Render
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(postRenderIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(postRenderIter));
     }
 
     protected void renderDebugDrawings() {
@@ -687,23 +490,17 @@ public class Scene {
 
         // Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugFilledIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugFilledIter));
         shapeRenderer.end();
 
         // Line
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugLineIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugLineIter));
         shapeRenderer.end();
 
         // Point
         shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(debugPointIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(debugPointIter));
         shapeRenderer.end();
     }
 
@@ -712,13 +509,12 @@ public class Scene {
      * <strong>DO NOT CALL THIS METHOD!</strong>
      */
     public void __destroy() {
-        gameObjects = getGameObjects();
-
-        for (GameObject go : gameObjects) {
-            go.__forEachComponent(destroyIter);
-        }
+        forEachGameObject(gameObject -> gameObject.__forEachComponent(destroyIter));
 
         canvas.dispose();
+
+        for (GameCamera camera : cameras)
+            camera.__destroy();
     }
 
     /**
@@ -821,4 +617,8 @@ public class Scene {
      */
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
+
+    public interface GameObjectIterationListener {
+        void onIterate(GameObject gameObject);
+    }
 }

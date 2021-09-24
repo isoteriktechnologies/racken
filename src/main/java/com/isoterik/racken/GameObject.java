@@ -52,8 +52,10 @@ public class GameObject {
      */
     public void __setHostScene(Scene hostScene) {
         this.hostScene = hostScene;
-        for (Component comp : components)
+        for (Component comp : components) {
             comp.__setHostScene(hostScene);
+            comp.setRenderCamera(hostScene.getMainCamera());
+        }
     }
 
     /**
@@ -103,6 +105,7 @@ public class GameObject {
         // If this game object is already added to a scene then we need to alert the component
         if (hostScene != null) {
             component.__setHostScene(hostScene);
+            component.setRenderCamera(hostScene.getMainCamera());
             component.start();
         }
 

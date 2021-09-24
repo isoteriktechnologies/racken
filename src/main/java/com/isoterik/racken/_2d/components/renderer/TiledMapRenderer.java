@@ -41,8 +41,6 @@ public class TiledMapRenderer extends Component {
 
     protected MapRenderer tiledMapRenderer;
 
-    protected GameCamera2d camera;
-
     /**
      * Creates a new instance given a tiled map and the unit scale to use.
      * The unit scale is the equivalence of 1 pixel in the game (1 / Pixels Per Unit).
@@ -75,21 +73,6 @@ public class TiledMapRenderer extends Component {
     { this(new TmxMapLoader().load(mapFileName), unitScale); }
 
     /**
-     * @return the current camera used for projection
-     */
-    public GameCamera2d getCamera() {
-        return camera;
-    }
-
-    /**
-     * Sets the camera to use for projection.
-     * @param camera the camera
-     */
-    public void setCamera(GameCamera2d camera) {
-        this.camera = camera;
-    }
-
-    /**
      * Renders the map on the scene. Subclasses can override this method to provide custom rendering.
      */
     protected void renderTiledMap() {
@@ -98,19 +81,13 @@ public class TiledMapRenderer extends Component {
 
     @Override
     public void preUpdate(float deltaTime) {
-        if (camera == null) {
-            GameCamera cam = scene.getMainCamera();
-            if (cam instanceof GameCamera2d)
-                camera = (GameCamera2d) cam;
-        }
-
-        if (camera != null)
-            tiledMapRenderer.setView(camera.getCamera());
+        if (renderCamera != null && renderCamera instanceof GameCamera2d)
+            tiledMapRenderer.setView(((GameCamera2d)renderCamera).getCamera());
     }
 
     @Override
     public void render() {
-        if (camera != null)
+        if (renderCamera != null && renderCamera instanceof GameCamera2d)
             renderTiledMap();
     }
 

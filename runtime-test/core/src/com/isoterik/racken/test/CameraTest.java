@@ -25,7 +25,7 @@ public class CameraTest extends Scene {
     }
 
     public CameraTest() {
-        setBackgroundColor(Color.BLACK);
+        //setBackgroundColor(Color.BLACK);
 
 //        GameObject tiledMapObject = GameObject.newInstance("TiledMap");
 //        addGameObject(tiledMapObject);

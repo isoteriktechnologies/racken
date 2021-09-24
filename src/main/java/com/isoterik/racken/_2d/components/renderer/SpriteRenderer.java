@@ -30,8 +30,6 @@ public class SpriteRenderer extends Component {
 
     protected Vector3 temp = new Vector3();
 
-    protected GameCamera2d gameCamera;
-
     /**
      * Creates a new instance given a sprite and {@link GameWorldUnits} to use for converting the sprite dimension to world units.
      * @param sprite an instance of {@link TextureRegion}
@@ -56,22 +54,6 @@ public class SpriteRenderer extends Component {
      */
     public SpriteRenderer(Texture sprite, GameWorldUnits gameWorldUnits)
     { this(new TextureRegion(sprite), gameWorldUnits); }
-
-    /**
-     * Returns the current {@link GameCamera2d} used.
-     * @return the current {@link GameCamera2d} used.
-     */
-    public GameCamera2d getGameCamera() {
-        return gameCamera;
-    }
-
-    /**
-     * Sets the current {@link GameCamera2d} used.
-     * @param gameCamera the current {@link GameCamera2d}
-     */
-    public void setGameCamera(GameCamera2d gameCamera) {
-        this.gameCamera = gameCamera;
-    }
 
     /**
      * Changes the visibility of the sprite.
@@ -217,23 +199,18 @@ public class SpriteRenderer extends Component {
         if (!visible)
             return;
 
-        // Use the default mainCamera if none is provided
-        if (gameCamera == null) {
-            GameCamera camera = scene.getMainCamera();
-            if (!(camera instanceof GameCamera2d))
-                return;
-
-            gameCamera = (GameCamera2d) camera;
-        }
+        // Only GameCamera2d can be used with this component
+        if (renderCamera == null || !(renderCamera instanceof GameCamera2d))
+            return;
 
         // If culling, the sprite should be rendered only if it can be seen by the camera
         if (cull) {
-            if (gameObject.transform.isInCameraFrustum(gameCamera.getCamera())) {
-                drawSprite(gameCamera);
+            if (gameObject.transform.isInCameraFrustum(renderCamera.getCamera())) {
+                drawSprite((GameCamera2d) renderCamera);
             }
         }
         else {
-            drawSprite(gameCamera);
+            drawSprite((GameCamera2d) renderCamera);
         }
     }
 
