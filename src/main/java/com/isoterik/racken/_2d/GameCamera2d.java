@@ -1,10 +1,8 @@
 package com.isoterik.racken._2d;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken.GameCamera;
@@ -19,8 +17,6 @@ import com.isoterik.racken.utils.GameWorldUnits;
 public class GameCamera2d extends GameCamera {
     protected SpriteBatch spriteBatch;
 
-    protected Color backgroundColor;
-
     /**
      * Creates a new instance given a viewport.
      * * <strong>Note:</strong> an {@link OrthographicCamera} will be created if it doesn't exist.
@@ -29,7 +25,6 @@ public class GameCamera2d extends GameCamera {
     public GameCamera2d(Viewport viewport) {
         super(viewport);
         spriteBatch = new SpriteBatch();
-        this.backgroundColor = new Color(1, 0, 0, 1);
         centerCameraOnResize = true;
     }
 
@@ -64,20 +59,6 @@ public class GameCamera2d extends GameCamera {
     public SpriteBatch getSpriteBatch()
     { return spriteBatch; }
 
-    /**
-     * Sets the color used for clearing the scene every frame.
-     * @param backgroundColor color used for clearing the scene every frame
-     */
-    public void setBackgroundColor(Color backgroundColor)
-    { this.backgroundColor = backgroundColor; }
-
-    /**
-     *
-     * @return color used for clearing the scene every frame
-     */
-    public Color getBackgroundColor()
-    { return backgroundColor; }
-
     @Override
     public OrthographicCamera getCamera()
     { return (OrthographicCamera)camera; }
@@ -103,7 +84,6 @@ public class GameCamera2d extends GameCamera {
     }
 
     public void __preRender() {
-        ScreenUtils.clear(backgroundColor);
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();

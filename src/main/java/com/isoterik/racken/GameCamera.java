@@ -18,7 +18,7 @@ public abstract class GameCamera {
 
     protected Viewport viewport;
 
-    protected boolean centerCameraOnResize = false;
+    protected boolean centerCameraOnResize = true;
 
     /**
      * Creates a new instance given a viewport.

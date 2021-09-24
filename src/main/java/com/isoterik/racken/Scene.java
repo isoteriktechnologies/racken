@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -69,6 +70,8 @@ public class Scene {
     protected final SnapshotArray<GameObject> gameObjects = new SnapshotArray<>(GameObject.class);
 
     protected final Array<GameCamera> cameras = new Array<>();
+
+    protected Color backgroundColor;
 
     /**
      * Creates a new instance.
@@ -149,6 +152,8 @@ public class Scene {
         };
 
         destroyIter = Component::destroy;
+
+        this.backgroundColor = new Color(1, 0, 0, 1);
 
         mainCamera = new GameCamera2d();
         addCamera(mainCamera);
@@ -380,15 +385,18 @@ public class Scene {
     }
 
     /**
-     * Sets the background color of this scene if it uses a {@link GameCamera2d}
-     * @param color the background color
+     * Sets the color used for clearing the scene every frame.
+     * @param backgroundColor color used for clearing the scene every frame
      */
-    public void setBackgroundColor(Color color) {
-        GameCamera camera = getMainCamera();
+    public void setBackgroundColor(Color backgroundColor)
+    { this.backgroundColor = backgroundColor; }
 
-        if (camera instanceof GameCamera2d)
-            ((GameCamera2d)camera).setBackgroundColor(color);
-    }
+    /**
+     * Returns the color used for clearing the scene every frame
+     * @return color used for clearing the scene every frame
+     */
+    public Color getBackgroundColor()
+    { return backgroundColor; }
 
     /**
      * Called when the screen is resized.
@@ -466,6 +474,8 @@ public class Scene {
     }
 
     protected void render() {
+        ScreenUtils.clear(backgroundColor);
+
         // Before Render
         forEachGameObject(gameObject -> gameObject.__forEachComponent(preRenderIter));
 
