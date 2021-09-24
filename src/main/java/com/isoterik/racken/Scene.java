@@ -296,43 +296,7 @@ public class Scene {
         mainCameraObject.removeComponent(getMainCamera());
         mainCameraObject.addComponent(mainCamera);
     }
-
-    /**
-     *
-     * @return the main camera used for projecting this scene.
-     */
-    public GameCamera getMainCamera()
-<<<<<<< HEAD
-    { return mainCamera; }
-
-    /**
-     * Adds a camera to the scene
-     * @param camera the camera to add
-     */
-    public void addCamera(GameCamera camera) {
-        if (!cameras.contains(camera, true))
-            cameras.add(camera);
-    }
-
-    /**
-     * Removes a camera from the scene
-     * @param camera the camera to remove
-     */
-    public void removeCamera(GameCamera camera) {
-        cameras.removeValue(camera, true);
-    }
-
-    /**
-     * Returns all the cameras in this scene
-     * @return all the cameras in this scene
-     */
-    public Array<GameCamera> getCameras() {
-        return cameras;
-    }
-=======
-    { return mainCameraObject.getComponent(GameCamera.class); }
->>>>>>> parent of 5c896ec (update)
-
+    
     /**
      * Finds a layer, given the name.
      * @param name the name of the layer to find.
