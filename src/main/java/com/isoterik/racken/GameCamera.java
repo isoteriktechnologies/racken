@@ -91,7 +91,4 @@ public abstract class GameCamera implements Disposable {
     public void __resize(int newScreenWidth, int newScreenHeight) {
         viewport.update(newScreenWidth, newScreenHeight, centerCameraOnResize);
     }
-
-    public abstract void __preRender();
-    public abstract void __postRender();
 }
