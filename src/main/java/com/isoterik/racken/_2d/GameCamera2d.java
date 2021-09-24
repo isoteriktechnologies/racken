@@ -86,7 +86,7 @@ public class GameCamera2d extends GameCamera {
     public void setup(Viewport viewport) {
         super.setup(viewport);
 
-        if (camera == null || !(camera instanceof PerspectiveCamera)) {
+        if (camera == null || !(camera instanceof OrthographicCamera)) {
             camera = new OrthographicCamera(viewport.getWorldWidth(), viewport.getWorldHeight());
             getCamera().setToOrtho(false, viewport.getWorldWidth(), viewport.getWorldHeight());
             viewport.setCamera(camera);

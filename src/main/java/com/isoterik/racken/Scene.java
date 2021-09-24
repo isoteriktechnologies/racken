@@ -313,9 +313,7 @@ public class Scene {
      * @return all the cameras in this scene
      */
     public Array<GameCamera> getCameras() {
-        Array<GameCamera> list = new Array<>();
-        list.addAll(cameras);
-        return list;
+        return cameras;
     }
 
     /**
