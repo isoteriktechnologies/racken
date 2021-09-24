@@ -19,6 +19,7 @@ public class Component {
     protected GameObject gameObject;
     protected Scene scene;
     protected InputManager input;
+    protected GameCamera renderCamera;
 
     protected boolean enabled = true;
 
@@ -125,6 +126,22 @@ public class Component {
      * You should dispose all scene wide resources here.
      */
     public void destroy() {}
+
+    /**
+     * Returns the camera this component renders with
+     * @return the camera this component renders with
+     */
+    public GameCamera getRenderCamera() {
+        return renderCamera;
+    }
+
+    /**
+     * Sets the camera this component renders with
+     * @param renderCamera the camera
+     */
+    public void setRenderCamera(GameCamera renderCamera) {
+        this.renderCamera = renderCamera;
+    }
 
     /**
      * Called when a new component is attached to the host game object.
