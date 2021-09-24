@@ -9,10 +9,10 @@ import com.badlogic.gdx.math.Interpolation;
 /**
  * A scene transition that splits the current scene in half
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Split implements ISceneTransition {
-    private static Split instance = new Split();
+    private static final Split instance = new Split();
 
     private float duration;
     private int direction;

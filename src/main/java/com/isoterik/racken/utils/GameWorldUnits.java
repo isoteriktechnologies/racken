@@ -7,7 +7,7 @@ import com.isoterik.racken.Transform;
 /**
  * Provides convenient methods for working with both world units and screen (pixel) units.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GameWorldUnits {
     private final float unit;

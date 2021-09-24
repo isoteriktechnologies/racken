@@ -7,7 +7,7 @@ import com.isoterik.racken.Component;
 /**
  * The base class for all debug renderers.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public abstract class BaseDebugRenderer extends Component {
 	public static final ShapeRenderer.ShapeType LINE_SHAPE

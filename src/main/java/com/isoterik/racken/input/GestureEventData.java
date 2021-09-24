@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Pool;
  * Contains information about a {@link GestureEvent}.
  * The amount of information contained is determined by the type of event that occurred
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GestureEventData implements Pool.Poolable {
     /**

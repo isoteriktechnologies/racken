@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Renders a box shape around the host game object
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class BoxDebugRenderer extends BaseDebugRenderer {
 	/**

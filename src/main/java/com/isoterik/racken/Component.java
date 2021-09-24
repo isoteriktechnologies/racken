@@ -13,7 +13,7 @@ import com.isoterik.racken.input.InputManager;
  *
  * @see GameObject
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Component {
     protected GameObject gameObject;

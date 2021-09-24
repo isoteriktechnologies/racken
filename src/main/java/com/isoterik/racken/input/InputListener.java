@@ -7,6 +7,6 @@ package com.isoterik.racken.input;
  * @see IKeyListener
  * @see IGestureListener
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface InputListener {}

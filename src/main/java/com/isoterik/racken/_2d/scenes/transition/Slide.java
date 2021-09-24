@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 /**
  * A scene transition that slides scenes
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Slide implements ISceneTransition {
     private static final Slide instance =   new Slide();

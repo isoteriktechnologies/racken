@@ -1,6 +1,5 @@
 package com.isoterik.racken._2d;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -12,7 +11,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
 /**
  * A game camera that wraps an {@link OrthographicCamera} for rendering in 2D space.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GameCamera2d extends GameCamera {
     protected SpriteBatch spriteBatch;

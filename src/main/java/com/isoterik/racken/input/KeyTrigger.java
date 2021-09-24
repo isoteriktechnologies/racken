@@ -4,7 +4,7 @@ package com.isoterik.racken.input;
  * A trigger for key events.
  * @see ITrigger
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class KeyTrigger extends Trigger {
     /**

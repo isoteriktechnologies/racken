@@ -15,7 +15,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  * Renders sprites ({@link Texture} or {@link TextureRegion}) when attached to a gameObject.
  * It uses the default mainCamera of the scene by default but this can be changed.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class SpriteRenderer extends Component {
     protected TextureRegion sprite;

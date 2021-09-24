@@ -3,7 +3,7 @@ package com.isoterik.racken.input;
 /**
  * Register an instance of this interface and a {@link GestureTrigger} with {@link InputManager} to define what happens when a gesture event occurs.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface IGestureListener extends InputListener {
     /**

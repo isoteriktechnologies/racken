@@ -11,23 +11,12 @@ import com.isoterik.racken._2d.scenes.transition.ISceneTransition;
  * <p>
  *
  * If you need to override any of the life cycle methods in your starter classes, don't forget to call the implementation of the super class.
- * @author isoteriksoftware
+ *
+ * @author imranabdulmalik
  */
 public abstract class GameDriver implements ApplicationListener {
     protected Racken racken;
     protected ISceneTransition splashTransition = null;
-
-    /** Log nothing */
-    public static final int LOG_NONE = Application.LOG_NONE;
-
-    /** Log errors only */
-    public static final int LOG_ERROR = Application.LOG_ERROR;
-
-    /** Log info only */
-    public static final int LOG_INFO = Application.LOG_INFO;
-
-    /** Log everything */
-    public static final int LOG_DEBUG = Application.LOG_DEBUG;
 
     @Override
     public void create() {
@@ -45,7 +34,8 @@ public abstract class GameDriver implements ApplicationListener {
 
     /**
      * Sets the log level that libGDX uses for logging.
-     * @param logLevel the log level. Should be one of {@link #LOG_DEBUG}, {@link #LOG_ERROR}, {@link #LOG_INFO}, {@link #LOG_NONE}
+     * @param logLevel the log level. Should be one of {@link Application#LOG_DEBUG}, {@link Application#LOG_ERROR},
+     * {@link Application#LOG_INFO}, {@link Application#LOG_NONE}
      */
     public void setLogLevel(int logLevel)
     { Gdx.app.setLogLevel(logLevel); }

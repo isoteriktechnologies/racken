@@ -3,7 +3,7 @@ package com.isoterik.racken.input;
 /**
  * Register an instance of this interface and a {@link TouchTrigger} with {@link InputManager} to define what happens when a touch event occurs.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface ITouchListener extends InputListener {
     /**

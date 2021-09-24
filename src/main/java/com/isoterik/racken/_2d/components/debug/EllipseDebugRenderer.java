@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Renders an ellipse shape around the host game object
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class EllipseDebugRenderer extends BaseDebugRenderer {
 	protected int segments = 20;

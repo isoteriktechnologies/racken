@@ -3,37 +3,38 @@ package com.isoterik.racken;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.isoterik.racken.utils.PoolableArrayIterator;
 
 /**
- * A GameObject represents an entity in the game. A GameObject can't do anything on its own; you have to give it properties before it can do anything.
- * A GameObject is a container; we have to add pieces to it to make into a character, a tree, a space ship or whatever else you would like it to be. Each piece
- * is called a {@link Component}.
+ * A GameObject represents an entity in the game. A GameObject can't do anything on its own; you have to give it
+ * properties before it can do anything.
+ * A GameObject is a container; we have to add pieces to it to make into a character, a tree, a spaceship or whatever
+ * else you would like it to be. Each piece is called a {@link Component}.
  * <p>
  *
- * Every GameObject has a {@link Transform} component attached automatically and cannot be removed. This is because the Transform defines where the GameObject is located and
- * how it is rotated and scaled; without a Transform, the GameObject would not have a location in the game world.
+ * Every GameObject has a {@link Transform} component attached automatically and cannot be removed. This is because the
+ * Transform defines where the GameObject is located and how it is rotated and scaled; without a Transform, the
+ * GameObject would not have a location in the game world.
  * <p>
  *
  * To create game objects, use the static factory methods: {@link #newInstance(String)} and {@link #newInstance()}
  *
  * @see Component
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GameObject {
-    protected final SnapshotArray<Component> components;
+    private final SnapshotArray<Component> components;
 
     public Transform transform;
 
-    protected String tag;
+    private String tag;
 
-    protected Scene hostScene;
+    private Scene hostScene;
 
-    protected GameObject()
+    private GameObject()
     { this("Untagged"); }
 
-    protected GameObject(String tag) {
+    private GameObject(String tag) {
         components = new SnapshotArray<>(Component.class);
 
         transform = new Transform();
@@ -183,10 +184,10 @@ public class GameObject {
     }
 
     /**
-     *
+     * Returns all the components attached to this game object.
      * @return all the components attached to this game object.
      */
-    public Array<Component> getComponents()
+    public SnapshotArray<Component> getComponents()
     { return components; }
 
     /**

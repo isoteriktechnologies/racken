@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * The Transform component determines the position, rotation, scale, size and origin of a {@link GameObject}.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Transform extends Component {
     /** The position of the host game object */

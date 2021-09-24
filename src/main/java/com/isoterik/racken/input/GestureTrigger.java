@@ -4,7 +4,7 @@ package com.isoterik.racken.input;
  * A trigger for gesture events.
  * @see ITrigger
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GestureTrigger extends Trigger {
     /**

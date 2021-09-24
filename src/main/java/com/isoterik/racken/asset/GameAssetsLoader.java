@@ -24,7 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  * For loading and managing game assets. This class uses {@link AssetManager} internally for handling assets.
  * Assets can be loaded either synchronously or asynchronously.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class GameAssetsLoader {
     protected AssetManager assetManager;

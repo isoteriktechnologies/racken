@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 /**
  * A singleton for managing game {@link Sound}s and {@link Music}s
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class AudioManager {
 	protected boolean soundEnabled = true;

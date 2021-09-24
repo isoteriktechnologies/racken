@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 /**
  * A scene transition that fades out the current scene and fade in the next scene simultaneously.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Fade implements ISceneTransition {
     private static final Fade instance = new Fade();

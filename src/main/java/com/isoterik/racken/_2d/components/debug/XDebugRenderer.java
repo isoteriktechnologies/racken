@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Renders a cross (X) at the center of the host game object
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class XDebugRenderer extends BaseDebugRenderer {
 	protected float size = .1f;

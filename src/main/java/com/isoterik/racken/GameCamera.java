@@ -11,7 +11,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  *
  * @see com.isoterik.racken._2d.GameCamera2d
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public abstract class GameCamera {
     protected Camera camera;
@@ -47,6 +47,10 @@ public abstract class GameCamera {
         this.camera = viewport.getCamera();
     }
 
+    /**
+     * Returns the viewport
+     * @return the viewport
+     */
     public Viewport getViewport() {
         return viewport;
     }
@@ -87,11 +91,27 @@ public abstract class GameCamera {
     public Camera getCamera()
     { return camera; }
 
+    /**
+     * Called when the screen is resized
+     * @param newScreenWidth the new screen width in pixels
+     * @param newScreenHeight the new screen height in pixels
+     */
     public void __resize(int newScreenWidth, int newScreenHeight) {
         viewport.update(newScreenWidth, newScreenHeight, centerCameraOnResize);
     }
 
+    /**
+     * Called when this camera should render
+     */
     public abstract void __preRender();
+
+    /**
+     * Called when this camera should stop rendering
+     */
     public abstract void __postRender();
+
+    /**
+     * Called when this camera should dispose any used resource
+     */
     public abstract void __destroy();
 }

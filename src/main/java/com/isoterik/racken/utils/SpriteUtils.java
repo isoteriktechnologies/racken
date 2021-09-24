@@ -9,7 +9,7 @@ import com.isoterik.racken.asset.GameAssetsLoader;
 /**
  * Provides some useful methods for working with sprites ({@link Texture}s and {@link TextureRegion}s)
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class SpriteUtils {
 	/* Makes sures the number has at least the provided number of digits */

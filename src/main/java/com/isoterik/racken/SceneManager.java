@@ -11,9 +11,9 @@ import com.isoterik.racken._2d.scenes.transition.ISceneTransition;
  * A SceneManager manages the scenes in a game. It maintains a stack of {@link Scene#setStackable(boolean) stackable} scenes that can be revisited using {@link #revertToPreviousScene(ISceneTransition)}.
  * Scenes can be transitioned immediately or using a {@link ISceneTransition} to animate the transition.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
-public final class SceneManager {
+public class SceneManager {
     private boolean init;
     private Scene currScene;
     private Scene nextScene;
@@ -24,8 +24,7 @@ public final class SceneManager {
     private float elapsedTime;
     private ISceneTransition sceneTransition;
 
-    private Array<Scene> sceneStack
-            = new Array<>();
+    private final Array<Scene> sceneStack = new Array<>();
 
     private static SceneManager instance;
 
@@ -59,7 +58,19 @@ public final class SceneManager {
      */
     public void setCurrentScene (Scene scene, ISceneTransition sceneTransition) {
         if (!init) {
-            initFields();
+            int w = Gdx.graphics.getWidth();
+            int h = Gdx.graphics.getHeight();
+
+            if(currFbo != null) {
+                currFbo.dispose();
+                nextFbo.dispose();
+                batch.dispose();
+            }
+
+            currFbo = new FrameBuffer(Format.RGB888, w, h, false);
+            nextFbo = new FrameBuffer(Format.RGB888, w, h, false);
+            batch = new SpriteBatch();
+
             init = true;
         }
 
@@ -80,21 +91,6 @@ public final class SceneManager {
 
         if (scene.isStackable())
             pushScene(scene);
-    }
-
-    private void initFields() {
-        int w = Gdx.graphics.getWidth();
-        int h = Gdx.graphics.getHeight();
-
-        if(currFbo != null) {
-            currFbo.dispose();
-            nextFbo.dispose();
-            batch.dispose();
-        }
-
-        currFbo = new FrameBuffer(Format.RGB888, w, h, false);
-        nextFbo = new FrameBuffer(Format.RGB888, w, h, false);
-        batch = new SpriteBatch();
     }
 
     /**

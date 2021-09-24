@@ -24,7 +24,8 @@ import java.util.Iterator;
 /**
  * A component capable of rendering a {@link TiledMap}. It uses {@link OrthoCachedTiledMapRenderer} for rendering by default but can be changed.
  * This component requires a {@link GameCamera2d} and will not render anything if none exists.
- * @author isoteriksoftware
+ *
+ * @author imranabdulmalik
  */
 public class TiledMapRenderer extends Component {
     /** The dimension of the map. */

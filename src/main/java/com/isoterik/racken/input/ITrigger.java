@@ -8,7 +8,7 @@ package com.isoterik.racken.input;
  * @see TouchTrigger
  * @see GestureTrigger
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface ITrigger {
     /**

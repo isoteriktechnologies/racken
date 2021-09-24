@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Renders a circle shape around the host game object
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class CircleDebugRenderer extends BaseDebugRenderer {
 	protected int segments = 30;

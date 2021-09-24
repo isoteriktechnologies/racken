@@ -9,11 +9,11 @@ import com.isoterik.racken.audio.AudioManager;
 import com.isoterik.racken.input.InputManager;
 
 /**
- * Environment class holding references to {@link Application}, {@link Graphics}, {@link GameAssetsLoader}, {@link SceneManager} and
- * {@link AudioManager} instances.
+ * Environment class holding references to {@link Application}, {@link Graphics}, {@link GameAssetsLoader},
+ * {@link SceneManager} and {@link AudioManager} instances.
  * The references are held in public final fields which allows access to all sub systems. Use {@link #instance()} to get the shared instance.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public final class Racken {
     private static Racken instance;
@@ -39,7 +39,7 @@ public final class Racken {
     private float deltaTime;
 
     /**
-     * Initializes MinGDX.
+     * Initializes Racken.
      * DO NOT CALL THIS METHOD
      */
     public static void __init()
@@ -84,6 +84,21 @@ public final class Racken {
      */
     public void setScene(Scene scene)
     { setScene(scene, null); }
+
+    /**
+     * Reverts to the previous scene.
+     * <strong>Note:</strong> Only {@link Scene#setStackable(boolean) stackable} scenes can be reverted to.
+     * @param transition a transition animation to use. can be null
+     */
+    public void revertToPreviousScene(ISceneTransition transition) {
+        sceneManager.revertToPreviousScene(transition);
+    }
+
+    /**
+     * Reverts to the previous scene.
+     */
+    public void revertToPreviousScene()
+    { revertToPreviousScene(null); }
 
     /**
      * Terminates the application.
@@ -134,7 +149,7 @@ public final class Racken {
     }
 
     /**
-     *
+     * Returns the time difference between this frame and the previous frame.
      * @return the time difference between this frame and the previous frame.
      */
     public float getDeltaTime()

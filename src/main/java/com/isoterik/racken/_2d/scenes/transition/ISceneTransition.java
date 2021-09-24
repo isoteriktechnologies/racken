@@ -4,14 +4,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * A scene transition animates the entrance and exit of scenes.
+ * A scene transition is for animating the entrance and exit of scenes.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface ISceneTransition {
     /**
-     *
-     * @return the duration (in seconds) this transition will take
+     * Returns the total duration (in seconds) this transition will take
+     * @return the total duration (in seconds) this transition will take
      */
     float getDuration();
 

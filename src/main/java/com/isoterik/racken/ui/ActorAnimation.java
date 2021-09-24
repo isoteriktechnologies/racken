@@ -17,7 +17,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 /**
  * Provides convenient methods for animating {@link Actor}s.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public final class ActorAnimation {
     private static ActorAnimation instance;

@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * A scene transition that divides the scene into slices and animate those slices.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Slice implements ISceneTransition {
     private static final Slice instance = new Slice();
@@ -18,7 +18,7 @@ public class Slice implements ISceneTransition {
     private float duration;
     private int direction;
     private Interpolation easing;
-    private Array<Integer> sliceIndex = new Array<Integer>();
+    private final Array<Integer> sliceIndex = new Array<>();
 
     /**
      * Creates a new instance given a duration, direction, number of slices and an interpolation
@@ -53,7 +53,7 @@ public class Slice implements ISceneTransition {
                         Texture nextScreen, float alpha) {
         float w = currScreen.getWidth();
         float h = currScreen.getHeight();
-        float x = 0;
+        float x;
         float y = 0;
         int sliceWidth = (int)(w / sliceIndex.size);
 

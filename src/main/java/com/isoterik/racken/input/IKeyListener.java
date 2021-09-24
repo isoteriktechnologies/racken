@@ -3,7 +3,7 @@ package com.isoterik.racken.input;
 /**
  * Register an instance of this interface and a {@link KeyTrigger} with {@link InputManager} to define what happens when a key event occurs.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public interface IKeyListener extends InputListener {
     /**

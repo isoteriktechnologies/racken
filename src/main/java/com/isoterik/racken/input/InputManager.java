@@ -14,7 +14,7 @@ import com.isoterik.racken.Scene;
  * It uses {@link ITrigger}s to determine when {@link InputListener}s should be invoked.
  * {@link InputListener}s can be mapped.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class InputManager extends InputAdapter implements GestureDetector.GestureListener {
 	private final Scene hostScene;
@@ -41,7 +41,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	/**
 	 * An array of supported mouse buttons.
 	 */
-	public static final int[] MOUSE_BUTTONS = {
+	private static final int[] MOUSE_BUTTONS = {
 			Input.Buttons.BACK,
 			Input.Buttons.FORWARD,
 			Input.Buttons.LEFT,
@@ -282,13 +282,22 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		removeMappedGestureListeners(mappingName);
 	}
 
-	private void removeAllMappedTouchListeners()
+	/**
+	 * Removes all mapped touch listeners
+	 */
+	public void removeAllMappedTouchListeners()
 	{ mappedTouchListeners.clear(); }
 
-	private void removeAllMappedKeyListeners()
+	/**
+	 * Removes all mapped key listeners
+	 */
+	public void removeAllMappedKeyListeners()
 	{ mappedKeyListeners.clear(); }
 
-	private void removeAllMappedGestureListeners ()
+	/**
+	 * Removes all mapped gesture listeners
+	 */
+	public void removeAllMappedGestureListeners ()
 	{ mappedGestureListeners.clear(); }
 
 	/**
@@ -421,6 +430,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 
 	}
 
+	/**
+	 * Maps a touch listener
+	 * @param mappingName the mapping name
+	 * @param listener the listener
+	 */
 	public void mapTouchListener(String mappingName, ITouchListener listener) {
 		Array<ITouchListener> listeners =
 				mappedTouchListeners.containsKey(mappingName) ?
@@ -431,6 +445,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 
 	}
 
+	/**
+	 * Maps a key listener
+	 * @param mappingName the mapping name
+	 * @param listener the listener
+	 */
 	public void mapKeyListener(String mappingName, IKeyListener listener) {
 		Array<IKeyListener> listeners =
 				mappedKeyListeners.containsKey(mappingName) ?
@@ -441,6 +460,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 
 	}
 
+	/**
+	 * Maps a gesture listener
+	 * @param mappingName the mapping name
+	 * @param listener the listener
+	 */
 	public void mapGestureListener(String mappingName, IGestureListener listener) {
 		Array<IGestureListener> listeners =
 				mappedGestureListeners.containsKey(mappingName) ?
@@ -547,6 +571,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 			addGestureListener((GestureTrigger) trigger, (IGestureListener) listener);
 	}
 
+	/**
+	 * Registers a touch listener and a trigger
+	 * @param trigger the trigger
+	 * @param listener the listener
+	 */
 	public void addTouchListener(TouchTrigger trigger, ITouchListener listener) {
 		if (touchListeners.containsKey(trigger))
 			return;
@@ -554,6 +583,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		touchListeners.put(trigger, listener);
 	}
 
+	/**
+	 * Registers a key listener and a trigger
+	 * @param trigger the trigger
+	 * @param listener the listener
+	 */
 	public void addKeyListener(KeyTrigger trigger, IKeyListener listener) {
 		if (keyListeners.containsKey(trigger))
 			return;
@@ -561,6 +595,11 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		keyListeners.put(trigger, listener);
 	}
 
+	/**
+	 * Registers a gesture listener and a trigger
+	 * @param trigger the trigger
+	 * @param listener the listener
+	 */
 	public void addGestureListener(GestureTrigger trigger, IGestureListener listener) {
 		if (gestureListeners.containsKey(trigger))
 			return;
@@ -710,8 +749,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.pointer = pointer;
 		eventData.button = button;
 
-		wakeTouchListeners(eventData);
-		wakeMappedTouchListeners(eventData);
+		invokeTouchListeners(eventData);
+		invokeMappedTouchListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -730,8 +769,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.pointer = pointer;
 		eventData.button = button;
 
-		wakeTouchListeners(eventData);
-		wakeMappedTouchListeners(eventData);
+		invokeTouchListeners(eventData);
+		invokeMappedTouchListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -749,8 +788,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.touchY = coords.y;
 		eventData.pointer = pointer;
 
-		wakeTouchListeners(eventData);
-		wakeMappedTouchListeners(eventData);
+		invokeTouchListeners(eventData);
+		invokeMappedTouchListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -764,8 +803,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.keyEvent = KeyEventData.KeyEvent.KEY_UP;
 		eventData.keyCode = keyCode;
 
-		wakeKeyListeners(eventData);
-		wakeMappedKeyListeners(eventData);
+		invokeKeyListeners(eventData);
+		invokeMappedKeyListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -779,8 +818,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.keyEvent = KeyEventData.KeyEvent.KEY_DOWN;
 		eventData.keyCode = keyCode;
 
-		wakeKeyListeners(eventData);
-		wakeMappedKeyListeners(eventData);
+		invokeKeyListeners(eventData);
+		invokeMappedKeyListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -794,8 +833,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.keyEvent = KeyEventData.KeyEvent.KEY_TYPED;
 		eventData.keyChar = keyChar;
 
-		wakeKeyListeners(eventData);
-		wakeMappedKeyListeners(eventData);
+		invokeKeyListeners(eventData);
+		invokeMappedKeyListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -817,8 +856,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		if (count == 2)
 			eventData.gestureEvent = GestureEventData.GestureEvent.DOUBLE_TAP;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -836,8 +875,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.flingVelocityY = velocity.y;
 		eventData.button = button;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -854,8 +893,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.x = coords.x;
 		eventData.y = coords.y;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -880,8 +919,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		worldPoint = getWorldCoords(pointer2);
 		eventData.pinchPointer2 = pointer2.set(worldPoint);
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -894,8 +933,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		GestureEventData eventData = obtainGestureEventData();
 		eventData.gestureEvent = GestureEventData.GestureEvent.PINCH_STOP;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -914,8 +953,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.panDeltaX = coords.x;
 		eventData.panDeltaY = coords.y;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -933,8 +972,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.y = coords.y;
 		eventData.pointer = pointer;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -955,8 +994,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.zoomFactor = initialDistance / distance;
 		eventData.zoomedIn = distance > initialDistance;
 
-		wakeGestureListeners(eventData);
-		wakeMappedGestureListeners(eventData);
+		invokeGestureListeners(eventData);
+		invokeMappedGestureListeners(eventData);
 
 		// Once all the listeners have been invoked, we need to recycle the event data for later use
 		recycleEventData(eventData);
@@ -999,7 +1038,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	public void addOnBackpressListener(IKeyListener listener)
 	{ addListener(KeyTrigger.keyDownTrigger(Keys.BACK), listener); }
 
-	private void wakeMappedTouchListeners(TouchEventData eventData) {
+	private void invokeMappedTouchListeners(TouchEventData eventData) {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedTouchListeners.keys();
 
@@ -1032,7 +1071,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeMappedKeyListeners(KeyEventData eventData) {
+	private void invokeMappedKeyListeners(KeyEventData eventData) {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedKeyListeners.keys();
 
@@ -1065,7 +1104,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeMappedGestureListeners(GestureEventData eventData) {
+	private void invokeMappedGestureListeners(GestureEventData eventData) {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedGestureListeners.keys();
 
@@ -1098,7 +1137,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeTouchListeners(TouchEventData eventData) {
+	private void invokeTouchListeners(TouchEventData eventData) {
 		// Check triggers that fired
 		ArrayMap.Keys<TouchTrigger> triggers = touchListeners.keys();
 		for (TouchTrigger trigger : triggers) {
@@ -1110,7 +1149,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeKeyListeners(KeyEventData eventData) {
+	private void invokeKeyListeners(KeyEventData eventData) {
 		// Check triggers that fired
 		ArrayMap.Keys<KeyTrigger> triggers = keyListeners.keys();
 		for (KeyTrigger trigger : triggers) {
@@ -1122,7 +1161,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeGestureListeners(GestureEventData eventData) {
+	private void invokeGestureListeners(GestureEventData eventData) {
 		// Check triggers that fired
 		ArrayMap.Keys<GestureTrigger> triggers = gestureListeners.keys();
 		for (GestureTrigger trigger : triggers) {
@@ -1134,7 +1173,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeMappedPolledTouchListeners(TouchEventData eventData) {
+	private void invokeMappedPolledTouchListeners(TouchEventData eventData) {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedTouchListeners.keys();
 
@@ -1167,7 +1206,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeMappedPolledKeyListeners() {
+	private void invokeMappedPolledKeyListeners() {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedKeyListeners.keys();
 
@@ -1205,7 +1244,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakeMappedPolledGestureListeners(GestureEventData eventData) {
+	private void invokeMappedPolledGestureListeners(GestureEventData eventData) {
 		// Get the mapped listener keys
 		ArrayMap.Keys<String> mappedListenerKeys  = mappedGestureListeners.keys();
 
@@ -1238,7 +1277,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakePolledTouchListeners(TouchEventData eventData) {
+	private void invokePolledTouchListeners(TouchEventData eventData) {
 		ArrayMap.Keys<TouchTrigger> triggers = touchListeners.keys();
 		for (TouchTrigger trigger : triggers) {
 			if (!trigger.isActive() || !trigger.isPolled())
@@ -1249,7 +1288,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakePolledKeyListeners() {
+	private void invokePolledKeyListeners() {
 		ArrayMap.Keys<KeyTrigger> triggers = keyListeners.keys();
 		for (KeyTrigger trigger : triggers) {
 			if (!trigger.isActive() || !trigger.isPolled())
@@ -1265,7 +1304,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		}
 	}
 
-	private void wakePolledGestureListeners(GestureEventData eventData) {
+	private void invokePolledGestureListeners(GestureEventData eventData) {
 		ArrayMap.Keys<GestureTrigger> triggers = gestureListeners.keys();
 		for (GestureTrigger trigger : triggers) {
 			if (!trigger.isActive() || !trigger.isPolled())
@@ -1296,8 +1335,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 					}
 				}
 
-				wakePolledTouchListeners(eventData);
-				wakeMappedPolledTouchListeners(eventData);
+				invokePolledTouchListeners(eventData);
+				invokeMappedPolledTouchListeners(eventData);
 
 				// Once all the listeners have been invoked, we need to recycle the event data for later use
 				recycleEventData(eventData);
@@ -1316,8 +1355,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 				}
 			}
 
-			wakePolledGestureListeners(eventData);
-			wakeMappedPolledGestureListeners(eventData);
+			invokePolledGestureListeners(eventData);
+			invokeMappedPolledGestureListeners(eventData);
 
 			// Once all the listeners have been invoked, we need to recycle the event data for later use
 			recycleEventData(eventData);
@@ -1337,15 +1376,15 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 				}
 			}
 
-			wakePolledGestureListeners(eventData);
-			wakeMappedPolledGestureListeners(eventData);
+			invokePolledGestureListeners(eventData);
+			invokeMappedPolledGestureListeners(eventData);
 
 			// Once all the listeners have been invoked, we need to recycle the event data for later use
 			recycleEventData(eventData);
 		}
 
-		wakePolledKeyListeners();
-		wakeMappedPolledKeyListeners();
+		invokePolledKeyListeners();
+		invokeMappedPolledKeyListeners();
 	}
 
 	/**

@@ -27,7 +27,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  * <p>
  * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive input and render; you don't have do these yourself.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class Scene {
     /** A reference to the shared instance of {@link Racken} */
@@ -51,7 +51,7 @@ public class Scene {
     private boolean isActive;
 
     /** {@link com.badlogic.gdx.scenes.scene2d.Stage} instance used for managing UI elements */
-    protected Stage canvas;
+    protected Stage uiCanvas;
 
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
@@ -62,15 +62,18 @@ public class Scene {
     /** Determines whether this stack can be stacked. */
     protected boolean stackable = true;
 
+    /** The main camera for this scene */
     protected GameCamera mainCamera;
 
     private int resizedWidth, resizedHeight;
 
-    // An array of game objects
+    /** The game objects in this scene */
     protected final SnapshotArray<GameObject> gameObjects = new SnapshotArray<>(GameObject.class);
 
+    /** The cameras of this scene */
     protected final Array<GameCamera> cameras = new Array<>();
 
+    /** The clear color */
     protected Color backgroundColor;
 
     /**
@@ -158,7 +161,7 @@ public class Scene {
         mainCamera = new GameCamera2d();
         addCamera(mainCamera);
 
-        setupCanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
+        setupUICanvas(new StretchViewport(gameWorldUnits.getScreenWidth(),
                 gameWorldUnits.getScreenHeight()));
 
         shapeRenderer = new ShapeRenderer();
@@ -168,7 +171,7 @@ public class Scene {
      * This is called during construction before instance fields are initialized. This is useful for setting default properties
      * that will be used during construction.
      *
-     * <strong>Most instance fields are not initialized yet, it is not safe to make use of them here!</strong>
+     * <strong>Only {@link #racken} is not null, most instance fields are not initialized yet, it is not safe to make use of them here!</strong>
      */
     protected void onCreate() {
     }
@@ -234,20 +237,20 @@ public class Scene {
      * Use this method to change the viewport to your desired viewport.
      * @param viewport a viewport for scaling UI elements
      */
-    public void setupCanvas(Viewport viewport) {
-        if (canvas != null)
-            input.getInputMultiplexer().removeProcessor(canvas);
+    public void setupUICanvas(Viewport viewport) {
+        if (uiCanvas != null)
+            input.getInputMultiplexer().removeProcessor(uiCanvas);
 
-        canvas = new Stage(viewport);
-        input.getInputMultiplexer().addProcessor(canvas);
+        uiCanvas = new Stage(viewport);
+        input.getInputMultiplexer().addProcessor(uiCanvas);
     }
 
     /**
      *
      * @return the {@link Stage} used for managing UI elements.
      */
-    public Stage getCanvas()
-    { return canvas; }
+    public Stage getUICanvas()
+    { return uiCanvas; }
 
     /**
      * A scene becomes active when the scene is resumed. It goes back to an inactive state when the scene is paused.
@@ -257,7 +260,7 @@ public class Scene {
     { return isActive; }
 
     /**
-     *
+     * Returns the InputManager for this scene
      * @return the input manager for this scene
      */
     public InputManager getInput()
@@ -325,7 +328,6 @@ public class Scene {
     /**
      * Adds a game object to this scene given a layer to add it to.
      * @param gameObject the game object to add
-     * @throws IllegalArgumentException if the given layer does not exist in this scene
      */
     public void addGameObject(GameObject gameObject) {
         gameObject.__setHostScene(this);
@@ -345,7 +347,7 @@ public class Scene {
     }
 
     /**
-     *
+     * Returns all the game objects added to this scene
      * @return all the game objects added to this scene
      */
     public SnapshotArray<GameObject> getGameObjects() {
@@ -413,7 +415,7 @@ public class Scene {
 
         forEachGameObject(gameObject -> gameObject.forEachComponent(resizeIter));
 
-        canvas.getViewport().update(width, height, true);
+        uiCanvas.getViewport().update(width, height, true);
     }
 
     /**
@@ -454,7 +456,7 @@ public class Scene {
 
         updateComponents();
 
-        canvas.act(deltaTime);
+        uiCanvas.act(deltaTime);
     }
 
     /**
@@ -470,7 +472,7 @@ public class Scene {
             renderDebugDrawings();
 
         // Draw the UI
-        canvas.draw();
+        uiCanvas.draw();
     }
 
     protected void render() {
@@ -496,6 +498,9 @@ public class Scene {
     }
 
     protected void renderDebugDrawings() {
+        if (mainCamera == null)
+            return;
+
         shapeRenderer.setProjectionMatrix(getMainCamera().getCamera().combined);
 
         // Filled
@@ -521,7 +526,7 @@ public class Scene {
     public void __destroy() {
         forEachGameObject(gameObject -> gameObject.forEachComponent(destroyIter));
 
-        canvas.dispose();
+        uiCanvas.dispose();
 
         for (GameCamera camera : cameras)
             camera.__destroy();
@@ -628,6 +633,9 @@ public class Scene {
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
 
+    /**
+     * An iteration listener for processing all game objects in a scene
+     */
     public interface GameObjectIterationListener {
         void onIterate(GameObject gameObject);
     }

@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.*;
  * The amount of information contained is determined by the type of event that occurred.
  * <strong>Mouse events are also treated as touch events</strong>
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class TouchEventData implements Pool.Poolable {
 	/**

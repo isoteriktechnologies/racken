@@ -3,7 +3,7 @@ package com.isoterik.racken._2d.scenes.transition;
 /**
  * Defines directions used by scene transitions.
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public class SceneTransitionDirection {
     public static final int LEFT                = 0;

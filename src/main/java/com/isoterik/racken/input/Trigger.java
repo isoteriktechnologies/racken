@@ -7,7 +7,7 @@ package com.isoterik.racken.input;
  * @see TouchTrigger
  * @see GestureTrigger
  *
- * @author isoteriksoftware
+ * @author imranabdulmalik
  */
 public abstract class Trigger implements ITrigger {
     protected boolean active = true;
