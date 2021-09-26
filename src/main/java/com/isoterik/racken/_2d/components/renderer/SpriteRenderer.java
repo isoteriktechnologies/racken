@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.isoterik.racken.Component;
 import com.isoterik.racken.GameCamera;
+import com.isoterik.racken.Transform;
 import com.isoterik.racken._2d.GameCamera2d;
 import com.isoterik.racken.utils.GameWorldUnits;
 
@@ -27,8 +28,6 @@ public class SpriteRenderer extends Component {
     protected boolean visible;
 
     protected GameWorldUnits gameWorldUnits;
-
-    protected Vector3 temp = new Vector3();
 
     /**
      * Creates a new instance given a sprite and {@link GameWorldUnits} to use for converting the sprite dimension to world units.
@@ -222,7 +221,7 @@ public class SpriteRenderer extends Component {
         SpriteBatch batch = gameCamera.getSpriteBatch();
         batch.setColor(color);
 
-        Vector3 pos    = temp.set(gameObject.transform.position);
+        Vector3 pos    = gameObject.transform.position;
         Vector3 size   = gameObject.transform.size;
         Vector3 scale  = gameObject.transform.scale;
         Vector3 origin = gameObject.transform.origin;
