@@ -5,6 +5,10 @@ import com.badlogic.gdx.math.Vector3;
 
 /**
  * The Transform component determines the position, rotation, scale, size and origin of a {@link GameObject}.
+ * <p>
+ * The coordinate values can be in either local coordinates or world coordinates. For GameObjects with no parent, the
+ * coordinates are always in world coordinates. But for GameObjects that have parents, the coordinates are always local
+ * to their parents.
  *
  * @author imranabdulmalik
  */
@@ -24,6 +28,8 @@ public class Transform extends Component {
     /** The orientation of the host game object */
     public final Vector3 rotation;
 
+    public final Transform local = new Transform();
+
     protected final Vector3 temp = new Vector3();
 
     /**
@@ -35,6 +41,7 @@ public class Transform extends Component {
         size     = new Vector3(0, 0, 0);
         origin   = new Vector3(0, 0,  0);
         rotation = new Vector3(0, 0, 0);
+        copyInto(local);
     }
 
     /**
@@ -229,6 +236,41 @@ public class Transform extends Component {
 
     public float getRotationZ() {
         return rotation.z;
+    }
+
+    /**
+     * Copies this transform to another given transform
+     * @param transform the transform to copy to
+     */
+    public void copyInto(Transform transform) {
+        transform.position.set(position);
+        transform.size.set(size);
+        transform.origin.set(origin);
+        transform.rotation.set(rotation);
+        transform.scale.set(scale);
+    }
+
+    /**
+     * Returns the transform of the host game object in world coordinates.
+     * If the host game object is not a child of another game object, then the current transform is copied and returned.
+     * If the host game object is a child of another game object, then the transform will be converted from the
+     * local parent's coordinates to world coordinates.
+     * @param out the output transform. if null is provided, a new transform will be created
+     * @return the transform of the host game object in world coordinates.
+     */
+    public Transform getWorldTransform(Transform out) {
+        if (out == null)
+            out = new Transform();
+
+        copyInto(out);
+
+        if (gameObject != null && gameObject.hasParent()) {
+            GameObject parent = gameObject.getParent();
+            out.position.add(parent.transform.position);
+            out.rotation.add(parent.transform.rotation);
+        }
+
+        return out;
     }
 
     /**

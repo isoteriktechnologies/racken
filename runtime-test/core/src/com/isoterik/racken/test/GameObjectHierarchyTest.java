@@ -7,12 +7,21 @@ import com.isoterik.racken.Scene;
 public class GameObjectHierarchyTest extends Scene {
     public GameObjectHierarchyTest() {
         GameObject parent = GameObject.newInstance("Parent");
+        GameObject parent2 = GameObject.newInstance("Parent2");
         GameObject child = GameObject.newInstance("Child");
+        GameObject child2 = GameObject.newInstance("Child2");
+        GameObject child3 = GameObject.newInstance("Child3");
 
-        parent.addChild(child);
+        parent2.addChild(child);
+        parent2.addChild(child2);
+        parent.addChild(child3);
+        parent.addChild(parent2);
 
-        parent.addComponent(new ParentObjectComponent());
-        child.addComponent(new ChildObjectComponent());
+        parent.addComponent(new LoggerComponent());
+        parent2.addComponent(new LoggerComponent());
+        child.addComponent(new LoggerComponent());
+        child2.addComponent(new LoggerComponent());
+        child3.addComponent(new LoggerComponent());
 
         addGameObject(parent);
     }
@@ -21,67 +30,35 @@ public class GameObjectHierarchyTest extends Scene {
         System.out.println(what);
     }
 
-    static class ParentObjectComponent extends Component {
+    static class LoggerComponent extends Component {
         @Override
         public void attach() {
-            print("Parent attach()");
+            print(gameObject.getTag() + " attach()");
         }
 
         @Override
         public void start() {
-            print("Parent start()");
+            print(gameObject.getTag() + " start()");
         }
 
         @Override
         public void resume() {
-            print("Parent resume()");
+            print(gameObject.getTag() + " resume()");
         }
 
         @Override
         public void preUpdate(float deltaTime) {
-            print("Parent preUpdate()");
+            print(gameObject.getTag() + " preUpdate()");
         }
 
         @Override
         public void update(float deltaTime) {
-            print("Parent update()");
+            print(gameObject.getTag() + " update()");
         }
 
         @Override
         public void postUpdate(float deltaTime) {
-            print("Parent postUpdate()");
-        }
-    }
-
-    static class ChildObjectComponent extends Component {
-        @Override
-        public void attach() {
-            print("Child attach()");
-        }
-
-        @Override
-        public void start() {
-            print("Child start()");
-        }
-
-        @Override
-        public void resume() {
-            print("Child resume()");
-        }
-
-        @Override
-        public void preUpdate(float deltaTime) {
-            print("Child preUpdate()");
-        }
-
-        @Override
-        public void update(float deltaTime) {
-            print("Child update()");
-        }
-
-        @Override
-        public void postUpdate(float deltaTime) {
-            print("Child postUpdate()");
+            print(gameObject.getTag() + " postUpdate()");
         }
     }
 }

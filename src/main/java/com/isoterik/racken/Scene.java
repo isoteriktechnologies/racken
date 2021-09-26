@@ -328,8 +328,13 @@ public class Scene {
     /**
      * Adds a game object to this scene given a layer to add it to.
      * @param gameObject the game object to add
+     * @throws IllegalStateException if the game object is a child of another game object
      */
     public void addGameObject(GameObject gameObject) {
+        if (gameObject.hasParent())
+            throw new IllegalStateException("A GameObject with a parent cannot be added directly to the Scene, " +
+                    "the parent should be added instead: " + "GameObject's Tag=" + gameObject.getTag());
+
         gameObject.__setHostScene(this);
         gameObjects.add(gameObject);
         gameObject.forEachComponent(startIter);

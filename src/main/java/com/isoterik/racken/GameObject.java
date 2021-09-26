@@ -45,18 +45,37 @@ public final class GameObject {
         this.tag = tag;
     }
 
+    /**
+     * Adds child game objects to this game object
+     * @param children the children
+     * @throws IllegalStateException if any of the children is already a child of another game object
+     */
     public void addChildren(GameObject... children) {
         for (GameObject child : children)
             addChild(child);
     }
 
+    /**
+     * Adds a child to this game object
+     * @param child the child to add
+     * @throws IllegalStateException if the child is already a child of another game object
+     */
     public void addChild(GameObject child) {
+        if (child.hasParent())
+            throw new IllegalStateException("A GameObject cannot have more than one parent: " +
+                    "GameObject's Tag=" + child.getTag());
+
         if (!children.contains(child, true)) {
             children.add(child);
             child.setParent(this);
         }
     }
 
+    /**
+     * Removes a child from this game object
+     * @param child the child to remove
+     * @return true if the child was found and removed. false otherwise
+     */
     public boolean removeChild(GameObject child) {
         boolean removed = children.removeValue(child, true);
         if (removed)
@@ -65,10 +84,20 @@ public final class GameObject {
         return removed;
     }
 
+    /**
+     * Removes all children of this game object
+     */
     public void clearChildren() {
+        for (GameObject child : children)
+            child.setParent(null);
+
         children.clear();
     }
 
+    /**
+     * Returns the children of this game object
+     * @return the children of this game object
+     */
     public SnapshotArray<GameObject> getChildren() {
         return children;
     }
