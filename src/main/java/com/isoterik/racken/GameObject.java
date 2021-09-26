@@ -22,14 +22,15 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
  *
  * @author imranabdulmalik
  */
-public class GameObject {
+public final class GameObject {
     private final SnapshotArray<Component> components;
+    private final SnapshotArray<GameObject> children = new SnapshotArray<>(GameObject.class);
 
     public Transform transform;
-
     private String tag;
-
     private Scene hostScene;
+
+    private GameObject parent;
 
     private GameObject()
     { this("Untagged"); }
@@ -44,6 +45,34 @@ public class GameObject {
         this.tag = tag;
     }
 
+    public void addChildren(GameObject... children) {
+        for (GameObject child : children)
+            addChild(child);
+    }
+
+    public void addChild(GameObject child) {
+        if (!children.contains(child, true)) {
+            children.add(child);
+            child.setParent(this);
+        }
+    }
+
+    public boolean removeChild(GameObject child) {
+        boolean removed = children.removeValue(child, true);
+        if (removed)
+            child.setParent(null);
+
+        return removed;
+    }
+
+    public void clearChildren() {
+        children.clear();
+    }
+
+    public SnapshotArray<GameObject> getChildren() {
+        return children;
+    }
+
     /**
      * Sets the scene where this game object resides.
      * This method is called internally by the system. Do not call it directly!
@@ -55,6 +84,20 @@ public class GameObject {
             comp.__setHostScene(hostScene);
             comp.setRenderCamera(hostScene.getMainCamera());
         }
+
+        forEachChild(gameObject -> gameObject.__setHostScene(hostScene));
+    }
+
+    public void setParent(GameObject parent) {
+        this.parent = parent;
+    }
+
+    public GameObject getParent() {
+        return parent;
+    }
+
+    public boolean hasParent() {
+        return parent != null;
     }
 
     /**
@@ -85,6 +128,8 @@ public class GameObject {
     public void __removeFromScene() {
         for (Component comp : components)
             comp.stop();
+
+        forEachChild(GameObject::__removeFromScene);
     }
 
     /**
@@ -220,6 +265,22 @@ public class GameObject {
                 iterationListener.onIterate(component);
 
         components.end();
+
+        forEachChild(gameObject -> gameObject.forEachComponent(iterationListener));
+    }
+
+    /**
+     * Calls the given iteration listener on every child of this game object
+     * @param iterationListener the iteration listener
+     */
+    public void forEachChild(GameObjectIterationListener iterationListener) {
+        GameObject[] array = children.begin();
+
+        for (GameObject gameObject : array)
+            if (gameObject != null)
+                iterationListener.onIterate(gameObject);
+
+        children.end();
     }
 
     /**
@@ -252,4 +313,11 @@ public class GameObject {
      */
     public static GameObject newInstance()
     { return new GameObject(); }
+
+    /**
+     * An iteration listener for processing game objects
+     */
+    public interface GameObjectIterationListener {
+        void onIterate(GameObject gameObject);
+    }
 }

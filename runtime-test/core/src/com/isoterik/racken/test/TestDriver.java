@@ -12,6 +12,6 @@ public class TestDriver extends GameDriver {
 		//splashTransition = SceneTransitions.fade(1f);
 		splashTransition = SceneTransitions.slice(3f, SceneTransitionDirection.UP_DOWN, 15,
 				Interpolation.swing);
-		return new SceneManagerTest();
+		return new GameObjectHierarchyTest();
 	}
 }

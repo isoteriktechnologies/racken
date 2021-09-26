@@ -5,8 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import com.isoterik.racken.input.InputManager;
 
 /**
- * A Component is a functional piece of a {@link GameObject}. Every component is an isolated functionality that can be attached to a {@link GameObject} to give that functionality to
- * that particular game object.
+ * A Component is a functional piece of a {@link GameObject}. Every component is an isolated functionality that can be
+ * attached to a {@link GameObject} to give that functionality to that particular game object.
  * To give functionality to a {@link GameObject}, you attach different components to it.
  * <p>
  * Component instances are not reusable but several instances of one component can be attached to different game objects to share the same functionality.
@@ -332,7 +332,7 @@ public class Component {
      * This has no effect if there is no existing valid {@link Scene}.
      * @param iterationListener the iteration listener
      */
-    public void forEachGameObject(Scene.GameObjectIterationListener iterationListener) {
+    public void forEachGameObject(GameObject.GameObjectIterationListener iterationListener) {
         if (scene != null)
             scene.forEachGameObject(iterationListener);
     }

@@ -315,7 +315,7 @@ public class Scene {
      * Calls the given iteration listener on every game objects in this scene
      * @param iterationListener the iteration listener
      */
-    public void forEachGameObject(GameObjectIterationListener iterationListener) {
+    public void forEachGameObject(GameObject.GameObjectIterationListener iterationListener) {
         GameObject[] array = gameObjects.begin();
 
         for (GameObject gameObject : array)
@@ -632,11 +632,4 @@ public class Scene {
      */
     public GameObject newSpriteObject(Texture sprite)
     { return newSpriteObject("Untagged", sprite); }
-
-    /**
-     * An iteration listener for processing all game objects in a scene
-     */
-    public interface GameObjectIterationListener {
-        void onIterate(GameObject gameObject);
-    }
 }
