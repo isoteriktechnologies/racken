@@ -9,9 +9,9 @@ import com.isoterik.racken._2d.scenes.transition.SceneTransitions;
 public class TestDriver extends GameDriver {
 	@Override
 	protected Scene initGame() {
-		//splashTransition = SceneTransitions.fade(1f);
-		splashTransition = SceneTransitions.slice(3f, SceneTransitionDirection.UP_DOWN, 15,
-				Interpolation.swing);
-		return new WorldLocalTransformTest();
+		splashTransition = SceneTransitions.fade(1f);
+//		splashTransition = SceneTransitions.slice(3f, SceneTransitionDirection.UP_DOWN, 15,
+//				Interpolation.swing);
+		return new ParentChildGameObjectTest();
 	}
 }

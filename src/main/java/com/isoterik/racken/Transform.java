@@ -61,6 +61,33 @@ public class Transform extends Component {
     { setOrigin(originX, originY, origin.z); }
 
     /**
+     * Sets the origin by taking a percentage of the dimension
+     * @param widthPercent the percentage of the width to use
+     * @param heightPercent the percentage of the height to use
+     * @param depthPercent the percentage of the depth to use
+     */
+    public void setOriginPercent(float widthPercent, float heightPercent, float depthPercent) {
+        origin.set(size.x * widthPercent, size.y * heightPercent, size.z * depthPercent);
+    }
+
+    /**
+     * Sets the origin by taking a percentage of the dimension
+     * @param widthPercent the percentage of the width to use
+     * @param heightPercent the percentage of the height to use
+     */
+    public void setOriginPercent(float widthPercent, float heightPercent) {
+        setOriginPercent(widthPercent, heightPercent, 0f);
+    }
+
+    /**
+     * Sets the origin by taking a percentage of the dimension
+     * @param percent the percentage of the dimension to use
+     */
+    public void setOriginPercent(float percent) {
+        setOriginPercent(percent, percent, percent);
+    }
+
+    /**
      * Sets the size of the host game object.
      * @param width the width
      * @param height the height
