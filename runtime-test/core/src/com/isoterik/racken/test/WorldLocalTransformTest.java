@@ -31,7 +31,8 @@ public class WorldLocalTransformTest extends Scene {
         public void postUpdate(float deltaTime) {
             Transform transform = gameObject.transform;
 
-            System.out.printf("%s: X->%f, Y->%f%n", gameObject.getTag(), transform.world.getX(), transform.world.getY());
+            System.out.printf("%s: X->%f, Y->%f%n", gameObject.getTag(), transform.world().getX(),
+                    transform.world().getY());
         }
     }
 }

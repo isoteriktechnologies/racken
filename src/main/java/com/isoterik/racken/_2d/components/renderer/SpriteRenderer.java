@@ -221,11 +221,12 @@ public class SpriteRenderer extends Component {
         SpriteBatch batch = gameCamera.getSpriteBatch();
         batch.setColor(color);
 
-        Vector3 pos    = gameObject.transform.position;
-        Vector3 size   = gameObject.transform.size;
-        Vector3 scale  = gameObject.transform.scale;
-        Vector3 origin = gameObject.transform.origin;
-        float rotation = gameObject.transform.getRotation();
+        Transform transform = gameObject.transform.world();
+        Vector3 pos    = transform.position;
+        Vector3 size   = transform.size;
+        Vector3 scale  = transform.scale;
+        Vector3 origin = transform.origin;
+        float rotation = transform.getRotation();
 
         // Draw the sprite
         batch.draw(sprite.getTexture(),

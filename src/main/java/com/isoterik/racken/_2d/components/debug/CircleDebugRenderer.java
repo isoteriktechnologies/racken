@@ -65,8 +65,8 @@ public class CircleDebugRenderer extends BaseDebugRenderer {
 
 	@Override
 	public void draw(ShapeRenderer shapeRenderer) {
-		Vector3 pos = gameObject.transform.position;
-		Vector3 size = gameObject.transform.size;
+		Vector3 pos = worldTransformCache.position;
+		Vector3 size = worldTransformCache.size;
 
 		shapeRenderer.circle(pos.x + size.x *  .5f, pos.y + size.y * .5f,
 				size.x * .5f, segments);

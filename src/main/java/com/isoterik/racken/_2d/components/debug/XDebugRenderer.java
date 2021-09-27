@@ -58,7 +58,7 @@ public class XDebugRenderer extends BaseDebugRenderer {
 
 	@Override
 	public void draw(ShapeRenderer shapeRenderer) {
-		Vector3 pos = gameObject.transform.position;
+		Vector3 pos = worldTransformCache.position;
 		
 		shapeRenderer.x(pos.x, pos.y, size);
 	}

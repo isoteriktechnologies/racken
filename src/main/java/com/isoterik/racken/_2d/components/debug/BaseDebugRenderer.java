@@ -3,6 +3,7 @@ package com.isoterik.racken._2d.components.debug;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.isoterik.racken.Component;
+import com.isoterik.racken.Transform;
 
 /**
  * The base class for all debug renderers.
@@ -20,6 +21,9 @@ public abstract class BaseDebugRenderer extends Component {
 	protected ShapeRenderer.ShapeType shapeType;
 	
 	protected Color color;
+
+	/** A cache of the current world transform of the host game object. */
+	protected Transform worldTransformCache;
 
 	public BaseDebugRenderer(ShapeRenderer.ShapeType shapeType, Color color) {
 		this.shapeType = shapeType;
@@ -67,6 +71,11 @@ public abstract class BaseDebugRenderer extends Component {
 	 */
 	public ShapeRenderer.ShapeType getShapeType()
 	{ return shapeType; }
+
+	@Override
+	public void postRender() {
+		worldTransformCache = gameObject.transform.world();
+	}
 
 	@Override
 	public void renderShapeLine(ShapeRenderer shapeRenderer) {

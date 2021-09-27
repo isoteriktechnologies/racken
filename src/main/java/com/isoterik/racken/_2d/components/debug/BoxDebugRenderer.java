@@ -46,11 +46,11 @@ public class BoxDebugRenderer extends BaseDebugRenderer {
 	
 	@Override
 	public void draw(ShapeRenderer shapeRenderer) {
-		Vector3 pos = gameObject.transform.position;
-		Vector3 size = gameObject.transform.size;
-		Vector3 origin = gameObject.transform.origin;
-		Vector3 scale = gameObject.transform.scale;
-		float rotation = gameObject.transform.getRotation();
+		Vector3 pos = worldTransformCache.position;
+		Vector3 size = worldTransformCache.size;
+		Vector3 origin = worldTransformCache.origin;
+		Vector3 scale = worldTransformCache.scale;
+		float rotation = worldTransformCache.getRotation();
 		
 		shapeRenderer.rect(pos.x, pos.y, origin.x, origin.y, 
 			size.x, size.y, scale.x, scale.y, rotation);

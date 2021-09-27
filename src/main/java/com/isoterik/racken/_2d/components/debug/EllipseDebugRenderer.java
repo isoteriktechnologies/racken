@@ -65,9 +65,9 @@ public class EllipseDebugRenderer extends BaseDebugRenderer {
 
 	@Override
 	public void draw(ShapeRenderer shapeRenderer) {
-		Vector3 pos = gameObject.transform.position;
-		Vector3 size = gameObject.transform.size;
-		float rotation = gameObject.transform.getRotation();
+		Vector3 pos = worldTransformCache.position;
+		Vector3 size = worldTransformCache.size;
+		float rotation = worldTransformCache.getRotation();
 
 		shapeRenderer.ellipse(pos.x, pos.y, size.x, size.y, 
 			rotation, segments);
