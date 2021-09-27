@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
  * <p>
  * The coordinate values can be in either local coordinates or world coordinates. For GameObjects with no parent, the
  * coordinates are always in world coordinates. But for GameObjects that have parents, the coordinates are always local
- * to their parents.
+ * to their parents. To grab the world coordinates, use {@link #world}
  *
  * @author imranabdulmalik
  */
@@ -28,7 +28,7 @@ public class Transform extends Component {
     /** The orientation of the host game object */
     public final Vector3 rotation;
 
-    public final Transform local = new Transform();
+    public Transform world;
 
     protected final Vector3 temp = new Vector3();
 
@@ -41,7 +41,6 @@ public class Transform extends Component {
         size     = new Vector3(0, 0, 0);
         origin   = new Vector3(0, 0,  0);
         rotation = new Vector3(0, 0, 0);
-        copyInto(local);
     }
 
     /**
@@ -335,6 +334,15 @@ public class Transform extends Component {
     public void attach() {
         if (hasComponent(Transform.class))
             throw new UnsupportedOperationException("There can only be one Transform component for a GameObject!");
+    }
+
+    @Override
+    public void preUpdate(float deltaTime) {
+        if (world == null)
+            world = new Transform();
+
+        // Convert from local coordinates to world coordinates
+        getWorldTransform(world);
     }
 
     @Override
