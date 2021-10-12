@@ -292,8 +292,11 @@ public class Transform extends Component {
 
         if (gameObject != null && gameObject.hasParent()) {
             GameObject parent = gameObject.getParent();
-            out.position.add(parent.transform.position);
-            out.rotation.add(parent.transform.rotation);
+            Transform parentTransform = parent.transform;
+
+            out.position.add(parentTransform.position);
+            out.rotation.add(parentTransform.rotation);
+            out.scale.add(parentTransform.scale);
         }
 
         return out;

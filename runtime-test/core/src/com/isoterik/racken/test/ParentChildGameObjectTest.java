@@ -13,8 +13,8 @@ public class ParentChildGameObjectTest extends Scene {
         Texture texture = new Texture("badlogic.jpg");
         GameObject parent = newSpriteObject(texture);
         GameObject child = newSpriteObject(texture);
-        parent.transform.setOriginPercent(1f);
         child.transform.size.scl(0.5f);
+        child.transform.setOriginPercent(.5f);
         //child.transform.setOriginPercent(0.5f);
         //child.transform.setRotation(-45);
         //child.transform.setPosition(parent.transform.getWidth()/2f, parent.transform.getHeight()/2f);
@@ -29,7 +29,7 @@ public class ParentChildGameObjectTest extends Scene {
         parent.addComponent(new Component() {
             @Override
             public void update(float deltaTime) {
-                parent.transform.rotate(-10 * deltaTime);
+                child.transform.rotate(-10 * deltaTime);
             }
         });
     }
