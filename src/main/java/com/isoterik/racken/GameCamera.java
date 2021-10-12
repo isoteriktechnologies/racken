@@ -45,6 +45,7 @@ public abstract class GameCamera {
     public void setup(Viewport viewport) {
         this.viewport = viewport;
         this.camera = viewport.getCamera();
+        viewport.update(0, 0, true);
     }
 
     /**

@@ -69,7 +69,6 @@ public class GameCamera2d extends GameCamera {
             getCamera().setToOrtho(false, viewport.getWorldWidth(), viewport.getWorldHeight());
             viewport.setCamera(camera);
             camera.update();
-            viewport.update(0, 0, true);
         }
 
         super.setup(viewport);
