@@ -114,7 +114,7 @@ public class TiledMapRenderer extends Component {
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<RectangleMapObject> getRectangleObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<RectangleMapObject> getRectangleObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<RectangleMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -135,12 +135,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all rectangle objects in a given layer.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<RectangleMapObject> getRectangleObjects(MapLayer mapLayer) {
+        return getRectangleObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all rectangle objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<RectangleMapObject> getRectangleObjects(String propertyName, String value) {
+    public <T> Array<RectangleMapObject> getRectangleObjects(String propertyName, T value) {
         Array<RectangleMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -163,13 +172,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all rectangle objects in every layer.
+     * @return an array of found objects
+     */
+    public Array<RectangleMapObject> getRectangleObjects() {
+        return getRectangleObjects("*", null);
+    }
+
+    /**
      * Gets all circle objects in a given layer that has a property whose value matches the one given.
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<CircleMapObject> getCircleObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<CircleMapObject> getCircleObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<CircleMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -190,12 +207,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all circle objects in a given layer.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<CircleMapObject> getCircleObjects(MapLayer mapLayer) {
+        return getCircleObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all circle objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<CircleMapObject> getCircleObjects(String propertyName, String value) {
+    public <T> Array<CircleMapObject> getCircleObjects(String propertyName, T value) {
         Array<CircleMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -218,13 +244,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all circle objects in every layer.
+     * @return an array of found objects
+     */
+    public Array<CircleMapObject> getCircleObjects() {
+        return getCircleObjects("*", null);
+    }
+
+    /**
      * Gets all ellipse objects in a given layer that has a property whose value matches the one given.
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<EllipseMapObject> getEllipseObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<EllipseMapObject> getEllipseObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<EllipseMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -245,12 +279,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all ellipse objects in a given layer.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<EllipseMapObject> getEllipseObjects(MapLayer mapLayer) {
+        return getEllipseObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all ellipse objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<EllipseMapObject> getEllipseObjects(String propertyName, String value) {
+    public <T> Array<EllipseMapObject> getEllipseObjects(String propertyName, T value) {
         Array<EllipseMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -273,13 +316,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all ellipse objects in every layer.
+     * @return an array of found objects
+     */
+    public Array<EllipseMapObject> getEllipseObjects() {
+        return getEllipseObjects("*", null);
+    }
+
+    /**
      * Gets all polygon objects in a given layer that has a property whose value matches the one given.
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<PolygonMapObject> getPolygonObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<PolygonMapObject> getPolygonObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<PolygonMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -300,12 +351,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all polygon objects in a given layer.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<PolygonMapObject> getPolygonObjects(MapLayer mapLayer) {
+        return getPolygonObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all polygon objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<PolygonMapObject> getPolygonObjects(String propertyName, String value) {
+    public <T> Array<PolygonMapObject> getPolygonObjects(String propertyName, T value) {
         Array<PolygonMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -328,13 +388,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all polygon objects in every layer.
+     * @return an array of found objects
+     */
+    public Array<PolygonMapObject> getPolygonObjects() {
+        return getPolygonObjects("*", null);
+    }
+
+    /**
      * Gets all polyline objects in a given layer that has a property whose value matches the one given.
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<PolylineMapObject> getPolylineObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<PolylineMapObject> getPolylineObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<PolylineMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -355,12 +423,21 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all polyline objects in a given layer.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<PolylineMapObject> getPolylineObjects(MapLayer mapLayer) {
+        return getPolylineObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all polyline objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<PolylineMapObject> getPolylineObjects(String propertyName, String value) {
+    public <T> Array<PolylineMapObject> getPolylineObjects(String propertyName, T value) {
         Array<PolylineMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -383,15 +460,23 @@ public class TiledMapRenderer extends Component {
     }
 
     /**
+     * Gets all polyline objects in every layer.
+     * @return an array of found objects
+     */
+    public Array<PolylineMapObject> getPolylineObjects() {
+        return getPolylineObjects("*", null);
+    }
+
+    /**
      * Gets all tile objects in a given layer that has a property whose value matches the one given.
-     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method will merge the properties
-     * before making the search.
+     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method
+     * will merge the properties before making the search.
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<TiledMapTileMapObject> getTileObjects(MapLayer mapLayer, String propertyName, String value) {
+    public <T> Array<TiledMapTileMapObject> getTileObjects(MapLayer mapLayer, String propertyName, T value) {
         Array<TiledMapTileMapObject> found = new Array<>();
 
         for (MapObject mapObject : mapLayer.getObjects()) {
@@ -421,21 +506,32 @@ public class TiledMapRenderer extends Component {
             }
 
             if (mapProperties.containsKey(propertyName) && mapProperties.get(propertyName).equals(value))
-                found.add((TiledMapTileMapObject)mapObject);
+                found.add(tiledMapTileMapObject);
         }
 
         return found;
     }
 
     /**
+     * Gets all tile objects in a given layer.
+     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method
+     * will merge the properties before making the search.
+     * @param mapLayer the layer
+     * @return an array of found objects
+     */
+    public Array<TiledMapTileMapObject> getTileObjects(MapLayer mapLayer) {
+        return getTileObjects(mapLayer, "*", null);
+    }
+
+    /**
      * Gets all tile objects in every layer that has a property whose value matches the one given.
-     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method will merge the properties
-     * before making the search.
+     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method
+     * will merge the properties before making the search.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
      * @return an array of found objects
      */
-    public Array<TiledMapTileMapObject> getTileObjects(String propertyName, String value) {
+    public <T> Array<TiledMapTileMapObject> getTileObjects(String propertyName, T value) {
         Array<TiledMapTileMapObject> found = new Array<>();
 
         for (MapLayer mapLayer : tiledMap.getLayers()) {
@@ -443,34 +539,40 @@ public class TiledMapRenderer extends Component {
                 if (!(mapObject instanceof  TiledMapTileMapObject))
                     continue;
 
+                if (propertyName.equals("*")) {
+                    found.add((TiledMapTileMapObject) mapObject);
+                    continue;
+                }
+
                 MapProperties mapProperties = mapObject.getProperties();
 
                 TiledMapTileMapObject tiledMapTileMapObject = (TiledMapTileMapObject)mapObject;
                 TiledMapTile tiledMapTile = tiledMapTileMapObject.getTile();
                 MapProperties defaultProperties = tiledMapTile.getProperties();
 
-                if (propertyName.equals("*")) {
-                    found.add((TiledMapTileMapObject) mapObject);
-                    continue;
-                }
-
                 // Copy all the default properties
                 Iterator<String> propertyKeys = defaultProperties.getKeys();
                 while (propertyKeys.hasNext()) {
                     String key = propertyKeys.next();
-
-                    if (mapProperties.containsKey(key))
-                        continue;
-
                     mapProperties.put(key, defaultProperties.get(key));
                 }
 
                 if (mapProperties.containsKey(propertyName) && mapProperties.get(propertyName).equals(value))
-                    found.add((TiledMapTileMapObject)mapObject);
+                    found.add(tiledMapTileMapObject);
             }
         }
 
         return found;
+    }
+
+    /**
+     * Gets all tile objects in every layer.
+     * Because {@link TiledMapTileMapObject}s have two kinds of properties (default and own properties), this method
+     * will merge the properties before making the search.
+     * @return an array of found objects
+     */
+    public Array<TiledMapTileMapObject> getTileObjects() {
+        return getTileObjects("*", null);
     }
 }
 
