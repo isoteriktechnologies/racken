@@ -1,5 +1,6 @@
 package com.isoterik.racken;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -45,7 +46,7 @@ public abstract class GameCamera {
     public void setup(Viewport viewport) {
         this.viewport = viewport;
         this.camera = viewport.getCamera();
-        viewport.update(0, 0, true);
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     /**
