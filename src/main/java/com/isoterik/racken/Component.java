@@ -328,6 +328,18 @@ public class Component {
     }
 
     /**
+     * Finds the first gameObject with the given tag.
+     * @param tag the gameObject's tag.
+     * @return the first gameObject with the given tag or null if none found or no scene yet.
+     */
+    public GameObject findGameObject(String tag) {
+        if (scene != null)
+            return scene.findGameObject(tag);
+
+        return null;
+    }
+
+    /**
      * Calls the given iteration listener on every game objects in the scene.
      * This has no effect if there is no existing valid {@link Scene}.
      * @param iterationListener the iteration listener
