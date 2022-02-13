@@ -101,7 +101,7 @@ public class TiledMapRenderer extends Component {
 
     /**
      * Sets the current map renderer.
-     * <strrong>Note that you may have to dispose the renderer if possible.</strrong>
+     * <strong>Note that you may have to dispose the renderer if possible.</strong>
      * @param tiledMapRenderer a map renderer
      */
     public void setTiledMapRenderer(MapRenderer tiledMapRenderer)
@@ -112,6 +112,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<RectangleMapObject> getRectangleObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -147,6 +148,7 @@ public class TiledMapRenderer extends Component {
      * Gets all rectangle objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<RectangleMapObject> getRectangleObjects(String propertyName, T value) {
@@ -184,6 +186,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<CircleMapObject> getCircleObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -219,6 +222,7 @@ public class TiledMapRenderer extends Component {
      * Gets all circle objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<CircleMapObject> getCircleObjects(String propertyName, T value) {
@@ -256,6 +260,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<EllipseMapObject> getEllipseObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -291,6 +296,7 @@ public class TiledMapRenderer extends Component {
      * Gets all ellipse objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<EllipseMapObject> getEllipseObjects(String propertyName, T value) {
@@ -328,6 +334,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<PolygonMapObject> getPolygonObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -363,6 +370,7 @@ public class TiledMapRenderer extends Component {
      * Gets all polygon objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<PolygonMapObject> getPolygonObjects(String propertyName, T value) {
@@ -400,6 +408,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<PolylineMapObject> getPolylineObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -435,6 +444,7 @@ public class TiledMapRenderer extends Component {
      * Gets all polyline objects in every layer that has a property whose value matches the one given.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<PolylineMapObject> getPolylineObjects(String propertyName, T value) {
@@ -474,6 +484,7 @@ public class TiledMapRenderer extends Component {
      * @param mapLayer the layer
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<TiledMapTileMapObject> getTileObjects(MapLayer mapLayer, String propertyName, T value) {
@@ -529,6 +540,7 @@ public class TiledMapRenderer extends Component {
      * will merge the properties before making the search.
      * @param propertyName the property name. <strong>use *</strong> to retrieve everything
      * @param value the property value to check
+     * @param <T> the type of the property value
      * @return an array of found objects
      */
     public <T> Array<TiledMapTileMapObject> getTileObjects(String propertyName, T value) {
