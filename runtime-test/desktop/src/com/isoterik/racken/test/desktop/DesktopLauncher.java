@@ -1,13 +1,13 @@
 package com.isoterik.racken.test.desktop;
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.isoterik.racken.test.TestDriver;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setWindowedMode(1280, 720);
-		new Lwjgl3Application(new TestDriver(), config);
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		//config.setWindowedMode(1280, 720);
+		new LwjglApplication(new TestDriver(), config);
 	}
 }
