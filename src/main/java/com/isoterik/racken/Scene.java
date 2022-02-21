@@ -308,6 +308,7 @@ public class Scene {
         if (mainCamera != null) {
             mainCamera.__destroy();
             cameras.removeValue(mainCamera, true);
+            mainCamera = null;
         }
     }
 

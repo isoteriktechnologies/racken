@@ -7,7 +7,8 @@ import com.isoterik.racken.test.TestDriver;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		//config.setWindowedMode(1280, 720);
+		config.width = 1024;
+		config.height = 640;
 		new LwjglApplication(new TestDriver(), config);
 	}
 }
