@@ -1,5 +1,6 @@
 package com.isoterik.racken.test;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,36 +21,50 @@ import com.isoterik.racken.input.KeyTrigger;
 public class MultiCameraTest extends Scene {
     private GameCamera2d cam1, cam2;
 
+    @Override
+    protected void onCreate() {
+        racken.defaultSettings.VIEWPORT_WIDTH = 1024;
+        racken.defaultSettings.VIEWPORT_HEIGHT = 640;
+    }
+
     public MultiCameraTest() {
         setBackgroundColor(Color.BLACK);
         setRenderDebugLines(true);
 
-        float hw = gameWorldUnits.getWorldWidth()/2f;
-        float hh = gameWorldUnits.getScreenHeight()/2f;
+        float hw = gameWorldUnits.getWorldWidth();
+        float hh = gameWorldUnits.getWorldHeight()/2f;
 
         cam1 = new GameCamera2d(new ExtendViewport(hw, hh, hw, hh));
         cam2 = new GameCamera2d(new ExtendViewport(hw, hh, hw, hh));
+        cam1.setScreenBoundsRatio(0, 0, 1, .5f);
+        cam2.setScreenBoundsRatio(0, .5f, 1, .5f);
+
         addCamera(cam1);
         addCamera(cam2);
-        removeMainCamera();
+        //removeMainCamera();
 
-        GameObject gameManager = GameObject.newInstance();
         GameObject g1 = GameObject.newInstance("Cam1 Object");
         GameObject g2 = GameObject.newInstance("Cam2 Object");
+        GameObject g3 = GameObject.newInstance("Cam2 Object2");
 
-        gameManager.transform.setSize(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight());
         g1.transform.setSize(hw, hh);
         g2.transform.setSize(hw, hh);
-        g2.transform.setX(hw);
+        g3.transform.setSize(1, 1);
 
-        g1.addComponent(new BoxDebugRenderer().setColor(Color.RED).setShapeType(ShapeRenderer.ShapeType.Filled));
-        g2.addComponent(new BoxDebugRenderer().setColor(Color.BLUE).setShapeType(ShapeRenderer.ShapeType.Filled));
+        g1.addComponent(new BoxDebugRenderer().setColor(Color.RED));
+        g2.addComponent(new BoxDebugRenderer().setColor(Color.BLUE));
+        g3.addComponent(new BoxDebugRenderer().setColor(Color.BLUE).setShapeType(ShapeRenderer.ShapeType.Filled));
 
-        gameManager.addChildren(g1, g2);
-        addGameObject(gameManager);
+        g1.forEachComponent(component -> component.setRenderCamera(cam1));
+        g2.forEachComponent(component -> component.setRenderCamera(cam2));
+        g3.forEachComponent(component -> component.setRenderCamera(cam2));
+
+        addGameObject(g1);
+        addGameObject(g2);
+        addGameObject(g3);
 
         input.addKeyListener(KeyTrigger.keyDownTrigger(Input.Keys.RIGHT).setPolled(true), (mappingName, keyEventData) -> {
-            cam1.getCamera().translate(0.1f, 0, 0);
+            cam2.getCamera().translate(0f, 0.1f, 0);
         });
     }
 }

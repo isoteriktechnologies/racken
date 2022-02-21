@@ -483,10 +483,8 @@ public class Scene {
     }
 
     protected void renderDebugDrawings() {
-//        if (mainCamera == null)
-//            return;
-
         for (GameCamera camera : cameras) {
+            camera.__preRender();
             shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
 
             // Filled
@@ -512,6 +510,8 @@ public class Scene {
                     component.renderShapePoint(shapeRenderer);
             }));
             shapeRenderer.end();
+
+            camera.__postRender();
         }
     }
 

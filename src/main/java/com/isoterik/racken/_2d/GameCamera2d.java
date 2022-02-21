@@ -24,7 +24,6 @@ public class GameCamera2d extends GameCamera {
     public GameCamera2d(Viewport viewport) {
         super(viewport);
         spriteBatch = new SpriteBatch();
-        centerCameraOnResize = true;
     }
 
     /**
@@ -81,8 +80,10 @@ public class GameCamera2d extends GameCamera {
         }
     }
 
+    @Override
     public void __preRender() {
-        camera.update();
+        super.__preRender();
+
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
     }

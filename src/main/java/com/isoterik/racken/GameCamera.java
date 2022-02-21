@@ -2,6 +2,7 @@ package com.isoterik.racken;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken.utils.GameWorldUnits;
@@ -19,7 +20,11 @@ public abstract class GameCamera {
 
     protected Viewport viewport;
 
-    protected boolean centerCameraOnResize = true;
+    protected boolean centerCameraOnResize = false;
+    protected boolean centerCameraOnUpdate = false;
+
+    protected Vector2 screenBoundsPositionRatio = new Vector2();
+    protected Vector2 screenBoundsSizeRatio = new Vector2(1, 1);
 
     /**
      * Creates a new instance given a viewport.
@@ -46,6 +51,7 @@ public abstract class GameCamera {
     public void setup(Viewport viewport) {
         this.viewport = viewport;
         this.camera = viewport.getCamera();
+
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
@@ -94,6 +100,35 @@ public abstract class GameCamera {
     { return camera; }
 
     /**
+     * Sets the ratio of the screen size used for this camera's viewport bounds
+     * @param screenXRatio ratio of screen x
+     * @param screenYRatio ratio of screen y
+     * @param screenWidthRatio ratio  of screen width
+     * @param screenHeightRatio ratio of screen height
+     */
+    public void setScreenBoundsRatio(float screenXRatio, float screenYRatio, float screenWidthRatio,
+                                    float screenHeightRatio) {
+        screenBoundsPositionRatio.set(screenXRatio, screenYRatio);
+        screenBoundsSizeRatio.set(screenWidthRatio, screenHeightRatio);
+    }
+
+    /**
+     *
+     * @return ratio of screen position for the bounds
+     */
+    public Vector2 getScreenBoundsPositionRatio() {
+        return screenBoundsPositionRatio;
+    }
+
+    /**
+     *
+     * @return ratio of screen size for the bounds
+     */
+    public Vector2 getScreenBoundsSizeRatio() {
+        return screenBoundsSizeRatio;
+    }
+
+    /**
      * Called when the screen is resized
      * @param newScreenWidth the new screen width in pixels
      * @param newScreenHeight the new screen height in pixels
@@ -105,7 +140,20 @@ public abstract class GameCamera {
     /**
      * Called when this camera should render
      */
-    public abstract void __preRender();
+    public void __preRender() {
+        if (viewport != null) {
+            int w = Gdx.graphics.getWidth();
+            int h = Gdx.graphics.getHeight();
+
+            int sx = (int) (w * screenBoundsPositionRatio.x);
+            int sy = (int) (h * screenBoundsPositionRatio.y);
+            int sw = (int) (w * screenBoundsSizeRatio.x);
+            int sh = (int) (h * screenBoundsSizeRatio.y);
+
+            viewport.setScreenBounds(sx, sy, sw, sh);
+            viewport.apply(centerCameraOnUpdate);
+        }
+    }
 
     /**
      * Called when this camera should stop rendering
