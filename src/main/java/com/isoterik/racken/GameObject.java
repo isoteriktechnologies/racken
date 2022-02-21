@@ -111,7 +111,9 @@ public final class GameObject {
         this.hostScene = hostScene;
         for (Component comp : components) {
             comp.__setHostScene(hostScene);
-            comp.setRenderCamera(hostScene.getMainCamera());
+
+            if (comp.getRenderCamera() == null)
+                comp.setRenderCamera(hostScene.getMainCamera());
         }
 
         forEachChild(gameObject -> gameObject.__setHostScene(hostScene));

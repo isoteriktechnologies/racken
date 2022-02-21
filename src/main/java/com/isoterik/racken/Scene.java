@@ -44,8 +44,7 @@ public class Scene {
 
     // These iteration listeners prevent us from creating new instances every time!
     protected GameObject.ComponentIterationListener startIter, pauseIter, preRenderIter, postRenderIter,
-            resumeIter, preUpdateIter, updateIter, resizeIter, postUpdateIter, renderIter,
-            debugLineIter, debugFilledIter, debugPointIter, destroyIter;
+            resumeIter, preUpdateIter, updateIter, resizeIter, postUpdateIter, destroyIter;
 
     // The state of the Scene
     private boolean isActive;
@@ -129,29 +128,9 @@ public class Scene {
                 component.preRender();
         };
 
-        renderIter = component -> {
-            if (component.isEnabled())
-                component.render();
-        };
-
         postRenderIter = component -> {
             if (component.isEnabled())
                 component.postRender();
-        };
-
-        debugLineIter = component -> {
-            if (component.isEnabled())
-                component.renderShapeLine(shapeRenderer);
-        };
-
-        debugFilledIter = component -> {
-            if (component.isEnabled())
-                component.renderShapeFilled(shapeRenderer);
-        };
-
-        debugPointIter = component -> {
-            if (component.isEnabled())
-                component.renderShapePoint(shapeRenderer);
         };
 
         destroyIter = Component::destroy;
@@ -492,7 +471,7 @@ public class Scene {
             camera.__preRender();
 
             forEachGameObject(gameObject -> gameObject.forEachComponent(component -> {
-                if (component.getRenderCamera() == camera)
+                if (component.isEnabled() && component.getRenderCamera() == camera)
                     component.render();
             }));
 
@@ -504,25 +483,36 @@ public class Scene {
     }
 
     protected void renderDebugDrawings() {
-        if (mainCamera == null)
-            return;
+//        if (mainCamera == null)
+//            return;
 
-        shapeRenderer.setProjectionMatrix(getMainCamera().getCamera().combined);
+        for (GameCamera camera : cameras) {
+            shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
 
-        // Filled
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        forEachGameObject(gameObject -> gameObject.forEachComponent(debugFilledIter));
-        shapeRenderer.end();
+            // Filled
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            forEachGameObject(gameObject -> gameObject.forEachComponent(component -> {
+                if (component.isEnabled() && component.getRenderCamera() == camera)
+                    component.renderShapeFilled(shapeRenderer);
+            }));
+            shapeRenderer.end();
 
-        // Line
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        forEachGameObject(gameObject -> gameObject.forEachComponent(debugLineIter));
-        shapeRenderer.end();
+            // Line
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            forEachGameObject(gameObject -> gameObject.forEachComponent(component -> {
+                if (component.isEnabled() && component.getRenderCamera() == camera)
+                    component.renderShapeLine(shapeRenderer);
+            }));
+            shapeRenderer.end();
 
-        // Point
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
-        forEachGameObject(gameObject -> gameObject.forEachComponent(debugPointIter));
-        shapeRenderer.end();
+            // Point
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
+            forEachGameObject(gameObject -> gameObject.forEachComponent(component -> {
+                if (component.isEnabled() && component.getRenderCamera() == camera)
+                    component.renderShapePoint(shapeRenderer);
+            }));
+            shapeRenderer.end();
+        }
     }
 
     /**
