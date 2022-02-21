@@ -1,21 +1,13 @@
 package com.isoterik.racken.test;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.isoterik.racken.Component;
 import com.isoterik.racken.GameObject;
 import com.isoterik.racken.Scene;
 import com.isoterik.racken._2d.GameCamera2d;
 import com.isoterik.racken._2d.components.debug.BoxDebugRenderer;
-import com.isoterik.racken._2d.components.renderer.TiledMapRenderer;
-import com.isoterik.racken.asset.GameAssetsLoader;
-import com.isoterik.racken.input.IKeyListener;
-import com.isoterik.racken.input.KeyEventData;
 import com.isoterik.racken.input.KeyTrigger;
 
 public class MultiCameraTest extends Scene {
@@ -63,7 +55,7 @@ public class MultiCameraTest extends Scene {
         addGameObject(g2);
         addGameObject(g3);
 
-        input.addKeyListener(KeyTrigger.keyDownTrigger(Input.Keys.RIGHT).setPolled(true), (mappingName, keyEventData) -> {
+        input.addKeyListener(KeyTrigger.keyDownTrigger(Input.Keys.UP).setPolled(true), (mappingName, keyEventData) -> {
             cam2.getCamera().translate(0f, 0.1f, 0);
         });
     }
