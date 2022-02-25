@@ -24,9 +24,9 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
  */
 public final class GameObject {
     private final SnapshotArray<Component> components;
-    private final SnapshotArray<GameObject> children = new SnapshotArray<>(GameObject.class);
+    private final SnapshotArray<GameObject> children;
 
-    public Transform transform;
+    public final Transform transform;
     private String tag;
     private Scene hostScene;
 
@@ -37,6 +37,7 @@ public final class GameObject {
 
     private GameObject(String tag) {
         components = new SnapshotArray<>(Component.class);
+        children = new SnapshotArray<>(GameObject.class);
 
         transform = new Transform();
         transform.__setGameObject(this);
