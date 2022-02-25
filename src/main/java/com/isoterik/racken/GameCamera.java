@@ -26,6 +26,8 @@ public abstract class GameCamera {
     protected Vector2 screenBoundsPositionRatio = new Vector2();
     protected Vector2 screenBoundsSizeRatio = new Vector2(1, 1);
 
+    protected boolean screenJustResized = true;
+
     /**
      * Creates a new instance given a viewport.
      * <strong>Note:</strong> the {@link Camera} is retrieved from the viewport passed.
@@ -93,6 +95,21 @@ public abstract class GameCamera {
     }
 
     /**
+     * @return true if the camera is centered when the camera is updated. false otherwise.
+     */
+    public boolean isCenterCameraOnUpdate() {
+        return centerCameraOnUpdate;
+    }
+
+    /**
+     * When set to true, the camera will be centered whenever the camera is updated
+     * @param centerCameraOnUpdate if the camera should be centered
+     */
+    public void setCenterCameraOnUpdate(boolean centerCameraOnUpdate) {
+        this.centerCameraOnUpdate = centerCameraOnUpdate;
+    }
+
+    /**
      *
      * @return the {@link Camera} object used internally
      */
@@ -113,7 +130,6 @@ public abstract class GameCamera {
     }
 
     /**
-     *
      * @return ratio of screen position for the bounds
      */
     public Vector2 getScreenBoundsPositionRatio() {
@@ -121,7 +137,6 @@ public abstract class GameCamera {
     }
 
     /**
-     *
      * @return ratio of screen size for the bounds
      */
     public Vector2 getScreenBoundsSizeRatio() {
@@ -135,6 +150,7 @@ public abstract class GameCamera {
      */
     public void __resize(int newScreenWidth, int newScreenHeight) {
         viewport.update(newScreenWidth, newScreenHeight, centerCameraOnResize);
+        screenJustResized = true;
     }
 
     /**
@@ -142,15 +158,20 @@ public abstract class GameCamera {
      */
     public void __preRender() {
         if (viewport != null) {
-            int w = Gdx.graphics.getWidth();
-            int h = Gdx.graphics.getHeight();
+            if (screenJustResized) {
+                int w = Gdx.graphics.getWidth();
+                int h = Gdx.graphics.getHeight();
 
-            int sx = (int) (w * screenBoundsPositionRatio.x);
-            int sy = (int) (h * screenBoundsPositionRatio.y);
-            int sw = (int) (w * screenBoundsSizeRatio.x);
-            int sh = (int) (h * screenBoundsSizeRatio.y);
+                int sx = (int) (w * screenBoundsPositionRatio.x);
+                int sy = (int) (h * screenBoundsPositionRatio.y);
+                int sw = (int) (w * screenBoundsSizeRatio.x);
+                int sh = (int) (h * screenBoundsSizeRatio.y);
 
-            viewport.setScreenBounds(sx, sy, sw, sh);
+                viewport.setScreenBounds(sx, sy, sw, sh);
+
+                screenJustResized = false;
+            }
+
             viewport.apply(centerCameraOnUpdate);
         }
     }

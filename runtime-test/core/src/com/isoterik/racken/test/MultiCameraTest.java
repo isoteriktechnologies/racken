@@ -27,7 +27,7 @@ public class MultiCameraTest extends Scene {
         float hh = gameWorldUnits.getWorldHeight()/2f;
 
         cam1 = new GameCamera2d(new ExtendViewport(hw, hh, hw, hh));
-        cam2 = new GameCamera2d(new ExtendViewport(hw, hh, hw, hh));
+        cam2 = new GameCamera2d(new ExtendViewport(hw, hh));
         cam1.setScreenBoundsRatio(0, 0, 1, .5f);
         cam2.setScreenBoundsRatio(0, .5f, 1, .5f);
 

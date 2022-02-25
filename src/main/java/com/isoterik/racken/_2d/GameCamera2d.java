@@ -24,6 +24,7 @@ public class GameCamera2d extends GameCamera {
     public GameCamera2d(Viewport viewport) {
         super(viewport);
         spriteBatch = new SpriteBatch();
+        centerCameraOnResize = true;
     }
 
     /**
