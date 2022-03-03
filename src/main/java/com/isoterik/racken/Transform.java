@@ -303,10 +303,15 @@ public class Transform extends Component {
     }
 
     /**
-     * Returns the current cached transform of the host game object in world coordinates
-     * @return the current cached transform of the host game object in world coordinates
+     * Returns the current transform of the host game object in world coordinates.
+     * @return the current transform of the host game object in world coordinates
      */
     public Transform world() {
+        if (world == null)
+            world = new Transform();
+
+        // Convert from local coordinates to world coordinates
+        getWorldTransform(world);
         return world;
     }
 
@@ -372,15 +377,6 @@ public class Transform extends Component {
     public void attach() {
         if (hasComponent(Transform.class))
             throw new UnsupportedOperationException("There can only be one Transform component for a GameObject!");
-    }
-
-    @Override
-    public void preUpdate(float deltaTime) {
-        if (world == null)
-            world = new Transform();
-
-        // Convert from local coordinates to world coordinates
-        getWorldTransform(world);
     }
 
     @Override

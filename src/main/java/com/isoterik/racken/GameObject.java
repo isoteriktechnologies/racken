@@ -47,7 +47,7 @@ public final class GameObject {
     }
 
     /**
-     * Adds child game objects to this game object
+     * Adds children game objects to this game object
      * @param children the children
      * @throws IllegalStateException if any of the children is already a child of another game object
      */
@@ -190,7 +190,6 @@ public final class GameObject {
 
     /**
      * Removes a component attached to this game object.
-     * <strong>Note:</strong> a component can remove itself.
      * @param component the component to remove.
      * @return true if the component was removed. false otherwise
      */
@@ -212,7 +211,6 @@ public final class GameObject {
 
     /**
      * Removes the first component found for a particular type that is attached to this host game object.
-     * <strong>Note:</strong> a component can remove itself.
      * @param componentClass the class of the component
      * @param <T> the type of component
      * @return true if a component of such type is removed. false otherwise
@@ -220,6 +218,11 @@ public final class GameObject {
     public <T extends Component> boolean removeComponent(Class<T> componentClass)
     { return removeComponent(getComponent(componentClass)); }
 
+    /**
+     * Removes all the components found for a particular type that is attached to this host game object.
+     * @param componentClass the class of the component
+     * @param <T> the type of component
+     */
     public <T extends Component> void removeComponents(Class<T> componentClass) {
         for (Component c : components) {
             if (ClassReflection.isAssignableFrom(componentClass, c.getClass()))
@@ -229,7 +232,6 @@ public final class GameObject {
 
     /**
      * Gets a component of a particular type that is attached to this game object.
-     * <strong>Note:</strong> a component can remove itself.
      * @param componentClass the class of the component
      * @param <T> the type of component
      * @return the component. null if not found
@@ -285,11 +287,11 @@ public final class GameObject {
     { return components.contains(component, true); }
 
     /**
-     * Calls the given IterationListener on all components attached to this game object.
-     * This method is used internally by the system. While it is safe to call it, you usually don't need to.
+     * Calls the given iteration listener on all components attached to this game object.
      * @param iterationListener the iteration listener
+     * @param withChildren if true, the components of the children of this game object will also be iterated
      */
-    public void forEachComponent(ComponentIterationListener iterationListener) {
+    public void forEachComponent(ComponentIterationListener iterationListener, boolean withChildren) {
         Component[] array = components.begin();
 
         for (Component component : array)
@@ -298,7 +300,16 @@ public final class GameObject {
 
         components.end();
 
-        forEachChild(gameObject -> gameObject.forEachComponent(iterationListener));
+        if (withChildren)
+            forEachChild(gameObject -> gameObject.forEachComponent(iterationListener));
+    }
+
+    /**
+     * Calls the given iteration listener on all components attached to this game object and all its children
+     * @param iterationListener the iteration listener
+     */
+    public void forEachComponent(ComponentIterationListener iterationListener) {
+        forEachComponent(iterationListener, true);
     }
 
     /**
