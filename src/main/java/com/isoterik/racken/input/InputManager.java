@@ -787,6 +787,12 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 		eventData.touchX = coords.x;
 		eventData.touchY = coords.y;
 		eventData.pointer = pointer;
+		for (int button : MOUSE_BUTTONS) {
+			if (isMouseDown(button)) {
+				eventData.button = button;
+				break;
+			}
+		}
 
 		invokeTouchListeners(eventData);
 		invokeMappedTouchListeners(eventData);
@@ -1329,7 +1335,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 				eventData.touchY = getTouchedY(i);
 				eventData.pointer = i;
 				for (int button : MOUSE_BUTTONS) {
-					if (isMouseJustPressed(button)) {
+					if (isMouseDown(button)) {
 						eventData.button = button;
 						break;
 					}

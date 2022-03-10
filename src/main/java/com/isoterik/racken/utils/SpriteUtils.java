@@ -43,10 +43,10 @@ public class SpriteUtils {
 	 * <pre>
 	 *     String beforeIndex   = "hero/sprite_"; // before the numeric part
 	 *     String afterIndex    = ".png"; // after the numeric part
-	 *     int startingIndex    = 0; // the index we want to start with (usually the first number)
-	 *     int stoppingIndex    = 4; // the last index to consider (usually the last number)
+	 *     int startingIndex    = 0; // the index we want to start with (usually the first number - 1)
+	 *     int stoppingIndex    = 4; // the last index to consider (usually the last number - 1)
 	 *     int digits           = 3; // the number of digits. Here it is 3 digits
-	 *     boolean linearFilter = true; // should linear filter be applied to the textures??
+	 *     boolean linearFilter = true; // should linear filter be applied to the textures?
 	 *
 	 *     Array{@literal <TextureRegion>} spriteSequence = SpriteUtils.getSpriteSequence(beforeIndex, afterIndex, startingIndex, stoppingIndex,
 	 * 		       digits, linearFilter);
