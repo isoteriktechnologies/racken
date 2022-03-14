@@ -2,11 +2,13 @@ package com.isoterik.racken.input;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.isoterik.racken.GameCamera;
 import com.isoterik.racken.Scene;
 
 /**
@@ -37,6 +39,8 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 
 	private final Vector2 tempVector = new Vector2();
 	private final Vector3 tempVector3 = new Vector3();
+
+	private GameCamera projectionCamera;
 
 	/**
 	 * An array of supported mouse buttons.
@@ -92,6 +96,22 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	 */
 	public void addProcessor (InputProcessor inputProcessor)
 	{ inputMultiplexer.addProcessor(inputProcessor); }
+
+	/**
+	 * Returns the camera used for coordinate translation
+	 * @return the camera used for coordinate translation
+	 */
+	public GameCamera getProjectionCamera() {
+		return projectionCamera;
+	}
+
+	/**
+	 * Sets the camera used for coordinate translation
+	 * @param projectionCamera the camera used for coordinate translation
+	 */
+	public void setProjectionCamera(GameCamera projectionCamera) {
+		this.projectionCamera = projectionCamera;
+	}
 
 	/**
 	 *
@@ -1014,18 +1034,25 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	{ return false; }
 
 	/**
-	 * Converts screen coordinates to world coordinates
+	 * Converts screen coordinates to world coordinates.
+	 * Uses the current main camera of the scene if there is no projection camera set.
 	 * @param screenX screen position on the x-axis
 	 * @param screenY screen position on the y-axis
 	 * @return the coordinates in world units
 	 */
 	public Vector2 getWorldCoords (float screenX, float screenY) {
-		if (hostScene.getMainCamera() == null)
-			throw new IllegalStateException("There is no valid MainCamera for the target Scene!");
+		Camera camera;
+		if (projectionCamera != null)
+			camera = projectionCamera.getCamera();
+		else {
+			if (hostScene.getMainCamera() == null)
+				throw new IllegalStateException("There is no valid camera to use for translation");
+
+			camera = hostScene.getMainCamera().getCamera();
+		}
 
 		tempVector3.set(screenX, screenY, 0);
-		Vector3 touch = hostScene.getMainCamera().getCamera()
-				.unproject(tempVector3);
+		Vector3 touch = camera.unproject(tempVector3);
 		return tempVector.set(touch.x, touch.y);
 	}
 
@@ -1041,7 +1068,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	 * A convenient method for adding a listener that responds to back presses on Android devices.
 	 * @param listener the listener
 	 */
-	public void addOnBackpressListener(IKeyListener listener)
+	public void addOnBackPressedListener(IKeyListener listener)
 	{ addListener(KeyTrigger.keyDownTrigger(Keys.BACK), listener); }
 
 	private void invokeMappedTouchListeners(TouchEventData eventData) {
@@ -1355,7 +1382,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 			eventData.x = getTouchedX();
 			eventData.y = getTouchedY();
 			for (int button : MOUSE_BUTTONS) {
-				if (isMouseJustPressed(button)) {
+				if (isMouseDown(button)) {
 					eventData.button = button;
 					break;
 				}
@@ -1376,7 +1403,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 			eventData.panDeltaX = getPanDeltaX();
 			eventData.panDeltaY = getPanDeltaY();
 			for (int button : MOUSE_BUTTONS) {
-				if (isMouseJustPressed(button)) {
+				if (isMouseDown(button)) {
 					eventData.button = button;
 					break;
 				}

@@ -180,7 +180,7 @@ public class GameAssetsLoader {
     	if (!dir.isDirectory())
     		assetManager.load(dir.path(), assetClass);
     	else {
-			for(FileHandle file : Gdx.files.internal(folderPath).list())
+			for(FileHandle file : dir.list())
 				enqueueFolderContents(file.path(), assetClass);
 		}
     }
