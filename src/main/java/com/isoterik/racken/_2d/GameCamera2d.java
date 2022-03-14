@@ -2,7 +2,7 @@ package com.isoterik.racken._2d;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isoterik.racken.GameCamera;
 import com.isoterik.racken.Racken;
@@ -28,16 +28,16 @@ public class GameCamera2d extends GameCamera {
     }
 
     /**
-     * Creates a new instance given an instance of {@link GameWorldUnits} for unit conversions. The viewport defaults to an {@link ExtendViewport}.
+     * Creates a new instance given an instance of {@link GameWorldUnits} for unit conversions. The viewport defaults to an {@link FitViewport}.
      * @param gameWorldUnits an instance of {@link GameWorldUnits}
      */
     public GameCamera2d(GameWorldUnits gameWorldUnits) {
-        this(new ExtendViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight()));
+        this(new FitViewport(gameWorldUnits.getWorldWidth(), gameWorldUnits.getWorldHeight()));
     }
 
     /**
      * Creates a new scene. The screen dimensions are taken from {@link Racken#defaultSettings}
-     * The viewport defaults to an {@link ExtendViewport}.
+     * The viewport defaults to an {@link FitViewport}.
      */
     public GameCamera2d() {
         this(new GameWorldUnits(Racken.instance().defaultSettings.VIEWPORT_WIDTH, Racken.instance().defaultSettings.VIEWPORT_HEIGHT,
@@ -93,32 +93,3 @@ public class GameCamera2d extends GameCamera {
         spriteBatch.end();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

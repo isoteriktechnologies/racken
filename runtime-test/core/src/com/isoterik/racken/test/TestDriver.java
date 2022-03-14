@@ -11,6 +11,6 @@ public class TestDriver extends GameDriver {
 		racken.assets.loadAssetsNow();
 
 		splashTransition = SceneTransitions.fade(1f);
-		return new MultiCameraTest();
+		return new ActorMappingTest();
 	}
 }

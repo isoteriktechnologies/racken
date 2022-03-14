@@ -1,4 +1,4 @@
-package com.isoterik.racken.ui;
+package com.isoterik.racken.actor;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;

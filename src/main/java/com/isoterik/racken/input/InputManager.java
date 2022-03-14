@@ -1572,7 +1572,7 @@ public class InputManager extends InputAdapter implements GestureDetector.Gestur
 	 * This is handy for creating custom behaviors in such scenarios. For example; show confirmation dialog.
 	 * <p>
 	 * <strong>Note:</strong> This setting affects every instance of {@link InputManager}.
-	 * Use {@link #addOnBackpressListener(IKeyListener)} to define custom behaviors.
+	 * Use {@link #addOnBackPressedListener(IKeyListener)} to define custom behaviors.
 	 * @param catchBackKey if {@code true} the BACK key will stop exiting the application when pressed
 	 */
 	public void setCatchBackKey(boolean catchBackKey)
