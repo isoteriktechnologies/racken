@@ -6,6 +6,22 @@ import com.isoterik.racken.GameObject;
 import com.isoterik.racken.Transform;
 import com.isoterik.racken.utils.GameWorldUnits;
 
+/**
+ * A mapper that maps the transforms of a {@link GameObject} and an {@link Actor}.
+ * The mapping direction is defined by {@link MappingType}.
+ * <p>
+ * It uses {@link GameWorldUnits} for unit conversions. If no custom converter is provided, it will attempt to use the
+ * default one of the scene.
+ * {@link Actor}s are assumed to be using pixel units!
+ * <p>
+ * {@link Actor}s that are not added to a {@link com.badlogic.gdx.scenes.scene2d.Stage} yet will be updated automatically
+ * before mapping.
+ * <p>
+ * The mapping is done in the {@link #postUpdate(float)} phase of the component. This allows other components to update
+ * before the mapping. If you want to change the phase where the mapping is done, you can extend this component and
+ * call the {@link #map(float)} method in whatever phase you like (don't forget to override the current phase to do
+ * nothing!)
+ */
 public class ActorGameObjectMapper extends Component {
     protected Actor actor;
 
@@ -13,6 +29,13 @@ public class ActorGameObjectMapper extends Component {
 
     protected MappingType mappingType = MappingType.MAP_FROM_ACTOR;
 
+    /**
+     * The mapping direction.
+     * <ul>
+     *     <li>{@link MappingType#MAP_FROM_ACTOR}: Use this if you want to map the actor's transform to the gameObject</li>
+     *     <li>{@link MappingType#MAP_FROM_GAME_OBJECT}: Use this if you want to map the gameObject's transform to the actor</li>
+     * </ul>
+     */
     public enum MappingType {
         MAP_FROM_GAME_OBJECT, MAP_FROM_ACTOR
     }
@@ -44,32 +67,59 @@ public class ActorGameObjectMapper extends Component {
         return unitConverter;
     }
 
+    /**
+     * Gets the current actor
+     * @return the current actor
+     */
     public Actor getActor() {
         return actor;
     }
 
+    /**
+     * Sets the current actor
+     * @param actor the actor
+     */
     public void setActor(Actor actor) {
         this.actor = actor;
     }
 
+    /**
+     * Returns the current unit converter.
+     * @return the current unit converter.
+     */
     public GameWorldUnits getUnitConverter() {
         return unitConverter;
     }
 
+    /**
+     * Sets the current unit converter.
+     * @param unitConverter the converter
+     */
     public void setUnitConverter(GameWorldUnits unitConverter) {
         this.unitConverter = unitConverter;
     }
 
+    /**
+     * Returns the current mapping type
+     * @return the current mapping type
+     */
     public MappingType getMappingType() {
         return mappingType;
     }
 
+    /**
+     * Sets the current mapping type
+     * @param mappingType the mapping type
+     */
     public void setMappingType(MappingType mappingType) {
         this.mappingType = mappingType;
     }
 
-    @Override
-    public void postUpdate(float deltaTime) {
+    /**
+     * Handles the mapping.
+     * @param deltaTime the delta time
+     */
+    protected void map(float deltaTime) {
         GameWorldUnits converter = resolveUnitConverter();
 
         if (converter != null && actor != null) {
@@ -98,5 +148,10 @@ public class ActorGameObjectMapper extends Component {
                 actor.setRotation(transform.getRotation());
             }
         }
+    }
+
+    @Override
+    public void postUpdate(float deltaTime) {
+        map(deltaTime);
     }
 }
