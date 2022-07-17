@@ -33,7 +33,7 @@ public class MultiCameraTest extends Scene {
 
         addCamera(cam1);
         addCamera(cam2);
-        removeMainCamera();
+        setMainCamera(cam1);
 
         GameObject g1 = GameObject.newInstance("Cam1 Object");
         GameObject g2 = GameObject.newInstance("Cam2 Object");
@@ -41,11 +41,11 @@ public class MultiCameraTest extends Scene {
 
         g1.transform.setSize(hw, hh);
         g2.transform.setSize(hw, hh);
-        g3.transform.setSize(1, 1);
+        g3.transform.setSize(1, 5);
 
-        g1.addComponent(new BoxDebugRenderer().setColor(Color.RED).setShapeType(ShapeRenderer.ShapeType.Filled));
+        g1.addComponent(new BoxDebugRenderer().setColor(Color.PURPLE).setShapeType(ShapeRenderer.ShapeType.Filled));
         g2.addComponent(new BoxDebugRenderer().setColor(Color.BLUE).setShapeType(ShapeRenderer.ShapeType.Filled));
-        g3.addComponent(new BoxDebugRenderer().setColor(Color.GREEN).setShapeType(ShapeRenderer.ShapeType.Filled));
+        g3.addComponent(new BoxDebugRenderer().setColor(Color.YELLOW).setShapeType(ShapeRenderer.ShapeType.Filled));
 
         g1.forEachComponent(component -> component.setRenderCamera(cam1));
         g2.forEachComponent(component -> component.setRenderCamera(cam2));

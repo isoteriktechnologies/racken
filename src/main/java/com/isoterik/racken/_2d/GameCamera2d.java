@@ -28,7 +28,8 @@ public class GameCamera2d extends GameCamera {
     }
 
     /**
-     * Creates a new instance given an instance of {@link GameWorldUnits} for unit conversions. The viewport defaults to an {@link FitViewport}.
+     * Creates a new instance given an instance of {@link GameWorldUnits} for unit conversions.
+     * The viewport defaults to a {@link FitViewport}.
      * @param gameWorldUnits an instance of {@link GameWorldUnits}
      */
     public GameCamera2d(GameWorldUnits gameWorldUnits) {
@@ -37,7 +38,7 @@ public class GameCamera2d extends GameCamera {
 
     /**
      * Creates a new scene. The screen dimensions are taken from {@link Racken#defaultSettings}
-     * The viewport defaults to an {@link FitViewport}.
+     * The viewport defaults to a {@link FitViewport}.
      */
     public GameCamera2d() {
         this(new GameWorldUnits(Racken.instance().defaultSettings.VIEWPORT_WIDTH, Racken.instance().defaultSettings.VIEWPORT_HEIGHT,
