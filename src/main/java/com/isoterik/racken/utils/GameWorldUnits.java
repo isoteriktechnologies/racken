@@ -71,7 +71,7 @@ public class GameWorldUnits {
      * Converts the dimensions and position of a {@link Transform} to world units.
      * @param transform a transform
      */
-    public void toWorldTransform(Transform transform) {
+    public void toWorldUnitTransform(Transform transform) {
         float w = toWorldUnit(transform.size.x);
         float h = toWorldUnit(transform.size.y);
         float d = toWorldUnit(transform.size.z);

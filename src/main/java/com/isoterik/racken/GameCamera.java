@@ -154,7 +154,7 @@ public abstract class GameCamera {
     }
 
     /**
-     * Called when this camera should render
+     * Called when this camera should prepare for rendering
      */
     public void __preRender() {
         if (viewport != null) {

@@ -105,7 +105,7 @@ public class ArithmeticUtils {
 		a >>= aTwos;
 		final int bTwos = Integer.numberOfTrailingZeros(b);
 		b >>= bTwos;
-		final int shift = aTwos <= bTwos ? aTwos : bTwos; // min(aTwos, bTwos);
+		final int shift = Math.min(aTwos, bTwos); // min(aTwos, bTwos);
 
 		// "a" and "b" are positive.
 		// If a > b then "gdc(a, b)" is equal to "gcd(a - b, b)".
@@ -115,7 +115,7 @@ public class ArithmeticUtils {
 		// "b" becomes the minimum of the current values.
 		while (a != b) {
 			final int delta = a - b;
-			b = a <= b ? a : b; // min(a, b);
+			b = Math.min(a, b); // min(a, b);
 			a = delta < 0 ? -delta : delta; // abs(delta);
 
 			// Remove any power of 2 in "a" ("b" is guaranteed to be odd).

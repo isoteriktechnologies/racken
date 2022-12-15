@@ -9,7 +9,7 @@ import com.isoterik.racken.input.InputManager;
  * attached to a {@link GameObject} to give that functionality to that particular game object.
  * To give functionality to a {@link GameObject}, you attach different components to it.
  * <p>
- * Component instances are not reusable but several instances of one component can be attached to different game objects to share the same functionality.
+ * Component instances cannot be shared but several instances of one component can be attached to different game objects to share the same functionality.
  *
  * @see GameObject
  *
@@ -25,7 +25,7 @@ public class Component {
 
     /**
      * Called when the component is attached to a {@link GameObject}.
-     * <strong>Note:</strong> At this point it is guaranteed that a game object exists for this component but it
+     * <strong>Note:</strong> At this point it is guaranteed that a game object exists for this component, but it
      * is not guaranteed that the game object has been added to a {@link Scene} yet!
      */
     public void attach() {}

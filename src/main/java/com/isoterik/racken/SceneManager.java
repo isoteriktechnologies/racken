@@ -8,7 +8,8 @@ import com.badlogic.gdx.utils.Array;
 import com.isoterik.racken._2d.scenes.transition.ISceneTransition;
 
 /**
- * A SceneManager manages the scenes in a game. It maintains a stack of {@link Scene#setStackable(boolean) stackable} scenes that can be revisited using {@link #revertToPreviousScene(ISceneTransition)}.
+ * A SceneManager manages the scenes in a game. It maintains a stack of {@link Scene#setStackable(boolean) stackable}
+ * scenes that can be revisited using {@link #revertToPreviousScene(ISceneTransition)}.
  * Scenes can be transitioned immediately or using a {@link ISceneTransition} to animate the transition.
  *
  * @author imranabdulmalik
@@ -138,15 +139,14 @@ public class SceneManager {
                 nextScene = null;
                 sceneTransition = null;
 
-                //notify the scenes of
-                //transition completion
+                // notify the scenes of transition completion
                 if (tempCurr != null)
                     tempCurr.transitionedFromThisScene(tempNext);
                 if (tempNext != null)
                     tempNext.transitionedToThisScene(tempCurr);
             }
             else {
-                // render screens to FBOs
+                // render scenes to FBOs
                 currFbo.begin();
                 if (currScene != null) {
                     currScene.__render();

@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.isoterik.racken._2d.scenes.transition.ISceneTransition;
 
 /**
- * Your starter class must extend this class to make it an xgdx game.
+ * Your starter class must extend this class to initialize racken.
  * <code>GameDriver</code> initializes all the core systems and start your game.
  * <p>
  *
@@ -26,7 +26,7 @@ public abstract class GameDriver implements ApplicationListener {
     }
 
     /**
-     * Implement this method to tell xGdx the initial scene of your game. This is where you'll typically initialize your splash scene
+     * Implement this method to tell racken the initial scene of your game. This is where you'll typically initialize your splash scene
      * and return it. You can optionally set {@link #splashTransition} to the transition you want to animate the scene with.
      * @return the initial scene of your game
      */

@@ -19,13 +19,14 @@ import com.isoterik.racken.utils.GameWorldUnits;
  * A Scene contains the {@link GameObject}s of your game. Think of each Scene as a unique level of your game.
  * Every scene has its own {@link InputManager} for managing input.
  * <p>
- * A {@link GameCamera} is used to display a portion of the scene or the whole scene at a time. While its possible to use multiple cameras, scenes currently
+ * A {@link GameCamera} is used to display a portion of the scene or the whole scene at a time.
+ * While its possible to use multiple cameras, scenes currently
  * support only one main camera for projection.
  * <p>
  *
  * GameObjects are processed top-down; game objects added first are processed first (this can be used to manipulate how GameObjects are rendered.)
  * <p>
- * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive input and render; you don't have do these yourself.
+ * Every scene has a {@link Stage} instance for working with UI elements. The stage is already setup to update, receive input and render; you don't have to do these yourself.
  *
  * @author imranabdulmalik
  */
@@ -55,10 +56,10 @@ public class Scene {
     /** ShapeRenderer for debug drawings */
     protected ShapeRenderer shapeRenderer;
 
-    /** This flag determines whether custom debug renderings should be done. */
+    /** This flag determines whether custom debug renderings should be enabled. */
     protected boolean renderCustomDebugLines;
 
-    /** Determines whether this stack can be stacked. */
+    /** Determines whether this scene can be stacked. */
     protected boolean stackable = true;
 
     /** The main camera for this scene */
@@ -176,7 +177,7 @@ public class Scene {
      * <strong>A good rule of thumb:</strong>
      * <ul>
      *     <li>
-     *         If the scene takes a considerable amount of time to load resources and the scene is very likely to be returned to then it may be a
+     *         If the scene takes a considerable amount of time to load resources and the scene is very likely to be returned to, then it may be a
      *         good choice to make it stackable. That way the resources are loaded only once.
      *     </li>
      *     <li>
@@ -306,7 +307,7 @@ public class Scene {
     }
 
     /**
-     * Adds a game object to this scene given a layer to add it to.
+     * Adds a game object to this scene.
      * @param gameObject the game object to add
      * @throws IllegalStateException if the game object is a child of another game object
      */
@@ -321,14 +322,18 @@ public class Scene {
     }
 
     /**
-     * Removes a game object from the default layer.
+     * Removes a game object from the scene.
      * @param gameObject the game object to remove.
      * @return true if the game object was removed. false otherwise.
      */
     public boolean removeGameObject(GameObject gameObject) {
-        gameObject.__removeFromScene();
-        gameObject.__setHostScene(null);
-        return gameObjects.removeValue(gameObject, true);
+        boolean removed = gameObjects.removeValue(gameObject, true);
+        if (removed) {
+            gameObject.__removeFromScene();
+            gameObject.__setHostScene(null);
+        }
+
+        return removed;
     }
 
     /**

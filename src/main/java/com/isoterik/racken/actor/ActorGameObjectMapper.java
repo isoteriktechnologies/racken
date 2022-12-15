@@ -19,7 +19,7 @@ import com.isoterik.racken.utils.GameWorldUnits;
  * <p>
  * The mapping is done in the {@link #postUpdate(float)} phase of the component. This allows other components to update
  * before the mapping. If you want to change the phase where the mapping is done, you can extend this component and
- * call the {@link #map(float)} method in whatever phase you like (don't forget to override the current phase to do
+ * call the {@link #map(float)} method in whatever phase you like (don't forget to override the default chosen phase to do
  * nothing!)
  */
 public class ActorGameObjectMapper extends Component {

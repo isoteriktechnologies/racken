@@ -156,7 +156,7 @@ public final class Racken {
     { return deltaTime; }
 
     /**
-     * This class defines default settings for some features of xgdx. The settings can always be changed.
+     * This class defines default settings for some features of racken. The settings can always be changed.
      *
      * It is useful for setting values that don't change or is not expected to change often.
      */

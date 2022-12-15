@@ -269,6 +269,9 @@ public class Transform extends Component {
      * @param transform the transform to copy to
      */
     public void copyInto(Transform transform) {
+        if (transform == null)
+            throw new IllegalArgumentException("Target transform cannot be null");
+
         transform.position.set(position);
         transform.size.set(size);
         transform.origin.set(origin);

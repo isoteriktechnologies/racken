@@ -33,7 +33,7 @@ public class SpriteUtils {
 	}
 
 	/**
-	 * Gets all the regions from a sprite sequence. The sequence must be ordered and each individual sprite must be named with a similar pattern.
+	 * Gets all the regions from a sprite sequence. The sequence must be ordered and each individual sprite must be named following a common pattern.
 	 * <strong>Note:</strong> the assets must be loaded before calling this method!
 	 * <p>
 	 * For example; if we have a sprite sequence in this order: <strong>hero/sprite_000.png, hero/sprite_001.png, hero/sprite_002.png, hero/sprite_003.png,

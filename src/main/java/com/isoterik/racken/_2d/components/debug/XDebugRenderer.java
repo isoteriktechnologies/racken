@@ -52,7 +52,7 @@ public class XDebugRenderer extends BaseDebugRenderer {
 	 */
 	@Override
 	public XDebugRenderer setShapeType(ShapeType shapeType) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("A PointDebugDraw can only use ShapeRenderer.ShapeType.Line shape " +
+		throw new UnsupportedOperationException("An XDebugDraw can only use ShapeRenderer.ShapeType.Line shape " +
 			" and cannot be changed!");
 	}
 

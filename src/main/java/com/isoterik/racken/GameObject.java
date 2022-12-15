@@ -47,7 +47,7 @@ public final class GameObject {
     }
 
     /**
-     * Adds children game objects to this game object
+     * Adds child game objects to this game object
      * @param children the children
      * @throws IllegalStateException if any of the children is already a child of another game object
      */
@@ -64,7 +64,7 @@ public final class GameObject {
     public void addChild(GameObject child) {
         if (child.hasParent())
             throw new IllegalStateException("A GameObject cannot have more than one parent: " +
-                    "GameObject's Tag=" + child.getTag());
+                    "Tag=" + child.getTag());
 
         if (!children.contains(child, true)) {
             children.add(child);
@@ -181,7 +181,8 @@ public final class GameObject {
         // If this game object is already added to a scene then we need to alert the component
         if (hostScene != null) {
             component.__setHostScene(hostScene);
-            component.setRenderCamera(hostScene.getMainCamera());
+            if (component.getRenderCamera() == null)
+                component.setRenderCamera(hostScene.getMainCamera());
             component.start();
         }
 

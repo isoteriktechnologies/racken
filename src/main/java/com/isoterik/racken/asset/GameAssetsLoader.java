@@ -35,14 +35,14 @@ public class GameAssetsLoader {
 	private static GameAssetsLoader instance;
 
 	/**
-	 * Initialized the loader. DO NOT CALL THIS METHOD
+	 * Initializes the loader. DO NOT CALL THIS METHOD
 	 */
 	public static void __init()
 	{ instance = new GameAssetsLoader(); }
 
 	/**
 	 *
-	 * @return a single instance of the loader
+	 * @return a singleton instance of the loader
 	 */
 	public static GameAssetsLoader instance()
 	{ return instance; }
