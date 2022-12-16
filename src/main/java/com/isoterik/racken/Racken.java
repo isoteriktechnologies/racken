@@ -3,6 +3,7 @@ package com.isoterik.racken;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.isoterik.racken._2d.scenes.transition.ISceneTransition;
 import com.isoterik.racken.asset.GameAssetsLoader;
 import com.isoterik.racken.audio.AudioManager;
@@ -37,6 +38,9 @@ public final class Racken {
     public final DefaultSettings defaultSettings;
 
     private float deltaTime;
+    private boolean logFPS;
+
+    private final FPSLogger fpsLogger;
 
     /**
      * Initializes Racken.
@@ -68,6 +72,8 @@ public final class Racken {
         InputManager.__initPools();
 
         defaultSettings = new DefaultSettings();
+
+        fpsLogger = new FPSLogger();
     }
 
     /**
@@ -137,6 +143,10 @@ public final class Racken {
     {
         deltaTime = Math.min(Gdx.graphics.getDeltaTime(),   1.0f / 60.0f);
         sceneManager.__render();
+
+        if (logFPS) {
+            fpsLogger.log();
+        }
     }
 
     /**
@@ -154,6 +164,21 @@ public final class Racken {
      */
     public float getDeltaTime()
     { return deltaTime; }
+
+    /**
+     * @return whether FPS is logged
+     */
+    public boolean isLogFPS() {
+        return logFPS;
+    }
+
+    /**
+     * Enables/disables FPS logging
+     * @param logFPS log FPS?
+     */
+    public void setLogFPS(boolean logFPS) {
+        this.logFPS = logFPS;
+    }
 
     /**
      * This class defines default settings for some features of racken. The settings can always be changed.
